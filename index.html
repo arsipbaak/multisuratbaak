@@ -121,7 +121,7 @@
             </div>
           </div>
 
-          <!-- FORM KHUSUS ORTU (AKTIF/UMUM) -->
+          <!-- FORM KHUSUS AKTIF KULIAH (ORTU) -->
           <div class="space-y-4" id="form-group-ortu" style="display: none;">
             <h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">C. Data Orang Tua / Wali</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -129,6 +129,16 @@
               <div><label class="block text-xs font-semibold text-slate-500 mb-1">NIP Wali (- jika tidak ada)</label><input type="text" id="ortu-nip" placeholder="Contoh: 19920622019061001" class="w-full border p-3 text-xs rounded-xl input-ortu"></div>
               <div><label class="block text-xs font-semibold text-slate-500 mb-1">Pangkat/Golongan</label><input type="text" id="ortu-pangkat" placeholder="Penata /III/b" class="w-full border p-3 text-xs rounded-xl input-ortu"></div>
               <div><label class="block text-xs font-semibold text-slate-500 mb-1">Instansi / Unit Kerja *</label><input type="text" id="ortu-instansi" placeholder="Contoh: Dinas Pendidikan" class="w-full border p-3 text-xs rounded-xl input-ortu"></div>
+            </div>
+          </div>
+
+          <!-- FORM KHUSUS KETERANGAN UMUM (TTL, ALAMAT, IPK) -->
+          <div class="space-y-4" id="form-group-umum" style="display: none;">
+            <h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">C. Data Pelengkap Umum</h5>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div><label class="block text-[11px] font-semibold text-slate-500 mb-1">Tempat, Tgl Lahir *</label><input type="text" id="umum-ttl" placeholder="Bangkalan, 12 Agustus 2005" class="w-full border p-3 text-xs rounded-xl input-umum"></div>
+              <div><label class="block text-[11px] font-semibold text-slate-500 mb-1">Alamat Lengkap *</label><input type="text" id="umum-alamat" placeholder="Jl. Raya Camplong" class="w-full border p-3 text-xs rounded-xl input-umum"></div>
+              <div><label class="block text-[11px] font-semibold text-slate-500 mb-1">IPK Terakhir *</label><input type="text" id="umum-ipk" placeholder="3.50" class="w-full border p-3 text-xs rounded-xl input-umum"></div>
             </div>
           </div>
 
@@ -155,8 +165,14 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">
             <div><label class="block text-xs font-semibold text-slate-500 mb-1">No WhatsApp Aktif *</label><input type="text" id="mhs-hp" required placeholder="Contoh: 628123456789" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="10" maxlength="15" class="w-full border p-3 text-xs rounded-xl focus:ring-1 outline-none"></div>
-            <div><label class="block text-xs font-semibold text-slate-500 mb-1">Tujuan Pengajuan *</label><select id="mhs-keperluan" required class="w-full border p-3 text-xs rounded-xl bg-white"><option value="">-- Pilih Keperluan --</option></select></div>
+            
+            <!-- FORM KEPERLUAN HANYA MUNCUL DI SURAT TERTENTU -->
+            <div id="form-group-keperluan" style="display: none;">
+              <label class="block text-xs font-semibold text-slate-500 mb-1">Tujuan / Keperluan *</label>
+              <select id="mhs-keperluan" class="w-full border p-3 text-xs rounded-xl bg-white"><option value="">-- Pilih Keperluan --</option></select>
+            </div>
           </div>
+          
           <div class="text-right border-t pt-4"><button type="submit" class="w-full md:w-auto bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md"><i class="fas fa-paper-plane mr-1.5"></i> Kirim Pengajuan</button></div>
         </form>
       </div>
@@ -190,38 +206,47 @@
     function validasiInput(input) { if (selectedAuthRole === 'mahasiswa') input.value = input.value.replace(/[^0-9]/g, ''); }
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('sidebar-overlay'); if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); } }
 
-    // ================= FUNGSI FORM DINAMIS (TAMBAH ANGGOTA OJT) =================
+    // ================= FUNGSI TAMPILAN DINAMIS =================
     function toggleFormDinamis() {
       const jenisVal = document.getElementById('mhs-jenis-surat').value;
       
+      // Sembunyikan semua terlebih dahulu
       document.getElementById('form-group-ortu').style.display = 'none';
+      document.getElementById('form-group-umum').style.display = 'none';
       document.getElementById('form-group-ojt').style.display = 'none';
-      document.querySelectorAll('.input-ortu').forEach(el => el.removeAttribute('required'));
-      document.querySelectorAll('.input-ojt').forEach(el => el.removeAttribute('required'));
+      document.getElementById('form-group-keperluan').style.display = 'none';
 
-      if(jenisVal === '3') { // 3 = ID Kode Surat Pengantar OJT (Sesuaikan dengan Master Data jika berbeda)
-        document.getElementById('form-group-ojt').style.display = 'block';
-        document.querySelectorAll('.input-ojt').forEach(el => el.setAttribute('required', 'true'));
-      } else if (jenisVal === '1' || jenisVal === '2') { // Aktif / Umum
+      // Hapus kewajiban pengisian (required)
+      document.querySelectorAll('.input-ortu').forEach(el => el.removeAttribute('required'));
+      document.querySelectorAll('.input-umum').forEach(el => el.removeAttribute('required'));
+      document.querySelectorAll('.input-ojt').forEach(el => el.removeAttribute('required'));
+      document.getElementById('mhs-keperluan').removeAttribute('required');
+
+      if (jenisVal === '1') { // 1 = Keterangan Aktif
         document.getElementById('form-group-ortu').style.display = 'block';
+        document.getElementById('form-group-keperluan').style.display = 'block'; // Keperluan Muncul
         document.querySelectorAll('.input-ortu').forEach(el => el.setAttribute('required', 'true'));
+        document.getElementById('mhs-keperluan').setAttribute('required', 'true');
+      } 
+      else if (jenisVal === '2') { // 2 = Keterangan Umum
+        document.getElementById('form-group-umum').style.display = 'block';
+        document.getElementById('form-group-keperluan').style.display = 'block'; // Keperluan Muncul
+        document.querySelectorAll('.input-umum').forEach(el => el.setAttribute('required', 'true'));
+        document.getElementById('mhs-keperluan').setAttribute('required', 'true');
+      }
+      else if (jenisVal === '3') { // 3 = Pengantar OJT
+        document.getElementById('form-group-ojt').style.display = 'block';
+        // Keperluan disembunyikan
+        document.querySelectorAll('.input-ojt').forEach(el => el.setAttribute('required', 'true'));
       }
     }
 
     function addOjtMember() {
       const container = document.getElementById('ojt-members-container');
-      const idx = container.children.length + 2; // +2 karena pengaju adalah anggota 1
-      const html = `
-        <div class="flex flex-col md:flex-row gap-3 items-end bg-slate-50 p-3.5 rounded-xl border border-slate-200 relative group member-row">
-          <div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">NIM Anggota ${idx}</label><input type="text" class="w-full border p-2.5 text-xs rounded-lg ojt-m-nim outline-none focus:ring-1" required placeholder="NIM"></div>
-          <div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">Nama Anggota ${idx}</label><input type="text" class="w-full border p-2.5 text-xs rounded-lg ojt-m-nama outline-none focus:ring-1" required placeholder="Nama Lengkap"></div>
-          <div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">Prodi Anggota ${idx}</label><input type="text" class="w-full border p-2.5 text-xs rounded-lg ojt-m-prodi outline-none focus:ring-1" required placeholder="Program Studi"></div>
-          <button type="button" onclick="this.parentElement.remove()" class="w-full md:w-auto px-4 py-2.5 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold hover:bg-rose-100 transition"><i class="fas fa-trash"></i></button>
-        </div>
-      `;
+      const idx = container.children.length + 2; 
+      const html = `<div class="flex flex-col md:flex-row gap-3 items-end bg-slate-50 p-3.5 rounded-xl border border-slate-200 relative group member-row"><div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">NIM Anggota ${idx}</label><input type="text" class="w-full border p-2.5 text-xs rounded-lg ojt-m-nim outline-none focus:ring-1" required placeholder="NIM"></div><div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">Nama Anggota ${idx}</label><input type="text" class="w-full border p-2.5 text-xs rounded-lg ojt-m-nama outline-none focus:ring-1" required placeholder="Nama Lengkap"></div><div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">Prodi Anggota ${idx}</label><input type="text" class="w-full border p-2.5 text-xs rounded-lg ojt-m-prodi outline-none focus:ring-1" required placeholder="Program Studi"></div><button type="button" onclick="this.parentElement.remove()" class="w-full md:w-auto px-4 py-2.5 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold hover:bg-rose-100 transition"><i class="fas fa-trash"></i></button></div>`;
       container.insertAdjacentHTML('beforeend', html);
     }
-    // ==============================================================================
 
     async function apiGet(action, params = {}) { const url = new URL(GAS_API_URL); url.searchParams.append('action', action); for(let key in params) url.searchParams.append(key, params[key]); return await fetch(url).then(r => r.json()); }
     async function apiPost(action, payload) { const form = new URLSearchParams(); form.append('action', action); form.append('data', JSON.stringify(payload)); return await fetch(GAS_API_URL, { method: 'POST', body: form }).then(r => r.json()); }
@@ -273,9 +298,15 @@
       if(viewName === 'dashboard') { fetchDatabaseMetrics(); } 
       else if(viewName === 'pengajuan') {
         if(appState.selectedMhs) {
+          // Isi otomatis Data Pemohon
           document.getElementById('mhs-nama').value = appState.selectedMhs.nama; document.getElementById('mhs-nim').value = appState.selectedMhs.nim;
           document.getElementById('mhs-prodi').value = appState.selectedMhs.prodi; document.getElementById('mhs-semester').value = appState.selectedMhs.semester;
           document.getElementById('mhs-tahun-akad').value = appState.selectedMhs.tahun_akademik; document.getElementById('mhs-lama-studi').value = appState.selectedMhs.lama_studi;
+          
+          // Isi otomatis form Surat Umum dari Database (Mahasiswa dapat mengubahnya)
+          document.getElementById('umum-ttl').value = appState.selectedMhs.ttl || "";
+          document.getElementById('umum-alamat').value = appState.selectedMhs.alamat || "";
+          document.getElementById('umum-ipk').value = appState.selectedMhs.ipk || "";
         }
         apiGet('getMasterData').then(res => {
           if(res.status === 'success') {
@@ -288,35 +319,28 @@
 
     async function doSubmitPermohonan(e) {
       e.preventDefault();
-      
-      // LOGIKA PENYUSUNAN ARRAY ANGGOTA OJT (JSON)
       let anggotaOJT = [];
       const jenisSurat = document.getElementById('mhs-jenis-surat').value;
       
-      if (jenisSurat === '3') { // OJT
-         // 1. Masukkan Pengaju Utama sebagai Anggota ke-1
+      if (jenisSurat === '3') { 
          anggotaOJT.push({ nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi });
-         
-         // 2. Loop semua input anggota tambahan (jika ada)
-         document.querySelectorAll('.member-row').forEach(row => {
-             anggotaOJT.push({
-                 nim: row.querySelector('.ojt-m-nim').value,
-                 nama: row.querySelector('.ojt-m-nama').value,
-                 prodi: row.querySelector('.ojt-m-prodi').value
-             });
-         });
+         document.querySelectorAll('.member-row').forEach(row => { anggotaOJT.push({ nim: row.querySelector('.ojt-m-nim').value, nama: row.querySelector('.ojt-m-nama').value, prodi: row.querySelector('.ojt-m-prodi').value }); });
       }
 
       const payload = {
         nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi,
         semester: document.getElementById('mhs-semester').value, tahun_akademik: document.getElementById('mhs-tahun-akad').value,
-        no_hp: document.getElementById('mhs-hp').value, tujuan: document.getElementById('mhs-keperluan').value,
+        no_hp: document.getElementById('mhs-hp').value, 
+        
+        tujuan: (jenisSurat === '1' || jenisSurat === '2') ? document.getElementById('mhs-keperluan').value : "-",
         kode_surat: jenisSurat,
         ortu_nama: document.getElementById('ortu-nama').value || "-", ortu_nip: document.getElementById('ortu-nip').value || "-",
         ortu_pangkat: document.getElementById('ortu-pangkat').value || "-", ortu_instansi: document.getElementById('ortu-instansi').value || "-",
         tujuan_pt: document.getElementById('ojt-tujuan').value || "-", alamat_pt: document.getElementById('ojt-alamat').value || "-",
         lama_ojt: document.getElementById('ojt-lama').value || "-", rentang_ojt: document.getElementById('ojt-rentang').value || "-",
-        anggota_ojt: JSON.stringify(anggotaOJT) // Konversi Array ke Teks JSON
+        anggota_ojt: JSON.stringify(anggotaOJT),
+        
+        umum_ttl: document.getElementById('umum-ttl').value || "-", umum_alamat: document.getElementById('umum-alamat').value || "-", umum_ipk: document.getElementById('umum-ipk').value || "-"
       };
       
       showToast("Menyimpan", "Mengirim data pengajuan...", "fa-spinner fa-spin");
