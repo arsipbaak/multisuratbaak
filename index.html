@@ -287,7 +287,7 @@
     function bukaFormKredensial(role) {
       selectedAuthRole = role; document.getElementById('role-selection-section').classList.add('hide'); document.getElementById('credential-form-section').classList.remove('hide');
       const label = document.getElementById('label-field-username'); const input = document.getElementById('auth-username'); const passContainer = document.getElementById('password-field-container'); const passInput = document.getElementById('auth-password');
-      if (role === 'mahasiswa') { label.innerText = "NIM Anda"; input.placeholder = "Contoh: 331120000"; passContainer.classList.add('hide'); passInput.removeAttribute('required'); } 
+      if (role === 'mahasiswa') { label.innerText = "NRP Anda"; input.placeholder = "Contoh: 331120000"; passContainer.classList.add('hide'); passInput.removeAttribute('required'); } 
       else { label.innerText = "Username Admin"; input.placeholder = "admin"; passContainer.classList.remove('hide'); passInput.setAttribute('required', 'true'); }
     }
     function kembaliKePilihanRole() { document.getElementById('credential-form-section').classList.add('hide'); document.getElementById('role-selection-section').classList.remove('hide'); }
