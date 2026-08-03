@@ -32,7 +32,7 @@
       </div>
 
       <div id="role-selection-section" class="space-y-3.5">
-        <button onclick="bukaFormKredensial('mahasiswa')" class="w-full flex items-center gap-3.5 p-4 bg-slate-50 hover:bg-blue-50/80 border rounded-xl text-left transition"><div class="w-10 h-10 rounded-lg bg-blue-100 text-poltera-navy flex items-center justify-center text-lg"><i class="fas fa-user-graduate"></i></div><div><p class="font-bold text-sm text-slate-700">Mahasiswa</p><p class="text-[10px] text-slate-400">Login dengan NIM Anda</p></div></button>
+        <button onclick="bukaFormKredensial('mahasiswa')" class="w-full flex items-center gap-3.5 p-4 bg-slate-50 hover:bg-blue-50/80 border rounded-xl text-left transition"><div class="w-10 h-10 rounded-lg bg-blue-100 text-poltera-navy flex items-center justify-center text-lg"><i class="fas fa-user-graduate"></i></div><div><p class="font-bold text-sm text-slate-700">Mahasiswa</p><p class="text-[10px] text-slate-400">Login dengan NRP Anda</p></div></button>
         <button onclick="bukaFormKredensial('admin')" class="w-full flex items-center gap-3.5 p-4 bg-slate-50 hover:bg-emerald-50 border rounded-xl text-left transition"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg"><i class="fas fa-user-shield"></i></div><div><p class="font-bold text-sm text-slate-700">Admin Akademik</p><p class="text-[10px] text-slate-400">Verifikator & TTE</p></div></button>
       </div>
 
@@ -40,7 +40,7 @@
         <button onclick="kembaliKePilihanRole()" class="text-slate-400 hover:text-poltera-navy mb-2"><i class="fas fa-arrow-left"></i> <span class="text-xs font-bold uppercase ml-1">Kembali</span></button>
         <form id="login-auth-form" onsubmit="prosesVerifikasiKredensial(event)">
           <div class="space-y-1 mb-3">
-            <label class="block text-[11px] font-bold text-slate-500 uppercase" id="label-field-username">NIM / Username</label>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase" id="label-field-username">NRP / Username</label>
             <div class="relative"><span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-user text-xs"></i></span><input type="text" id="auth-username" required placeholder="Masukkan ID..." oninput="validasiInput(this)" class="w-full pl-9 pr-4 py-2.5 border rounded-lg text-xs font-semibold"></div>
           </div>
           <div class="space-y-1 mb-4" id="password-field-container">
