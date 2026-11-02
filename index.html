@@ -84,12 +84,28 @@
         <div class="bg-white p-4 rounded-2xl border flex items-center gap-4" id="card-quota" style="display: none;"><div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg"><i class="fas fa-server"></i></div><div><p class="text-[10px] font-semibold text-slate-400">Sisa Kuota Server</p><p class="text-xl font-bold text-slate-800" id="stat-quota">-</p></div></div>
       </div>
       
+      <!-- DESKRIPSI LAYANAN SURAT (SUDAH DIBUAT BISA DIKLIK) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-blue-500 hover:shadow-md transition"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-file-alt text-blue-500 mr-1.5"></i> Surat Keterangan Aktif</h5><p class="text-[11px] text-slate-500 leading-relaxed">Digunakan untuk kebutuhan tunjangan orang tua ASN/Swasta (Tunjangan TASPEN, BPJS).</p></div>
-        <div class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-emerald-500 hover:shadow-md transition"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-file-signature text-emerald-500 mr-1.5"></i> Surat Keterangan</h5><p class="text-[11px] text-slate-500 leading-relaxed">Digunakan untuk kebutuhan Surat Keterangan, Kehilangan, dan Administrasi umum lainnya.</p></div>
-        <div class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-amber-500 hover:shadow-md transition"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-briefcase text-amber-500 mr-1.5"></i> Surat Pengantar OJT</h5><p class="text-[11px] text-slate-500 leading-relaxed">Digunakan untuk kebutuhan persyaratan pengajuan OJT ke pihak Industri/Perusahaan.</p></div>
-        <div class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-purple-500 hover:shadow-md transition"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-graduation-cap text-purple-500 mr-1.5"></i> Keterangan Lulus (SKL)</h5><p class="text-[11px] text-slate-500 leading-relaxed">Diberikan kepada mahasiswa yang telah mengikuti yudisium sebagai pengganti ijazah sementara.</p></div>
-        <div class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-rose-500 hover:shadow-md transition"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-award text-rose-500 mr-1.5"></i> Monitoring Beasiswa</h5><p class="text-[11px] text-slate-500 leading-relaxed">Digunakan sebagai dokumen persyaratan keberlanjutan penerimaan program Beasiswa.</p></div>
+        <div onclick="ajukanSuratSpesifik('1')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-blue-500 hover:shadow-md transition cursor-pointer group">
+          <h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-file-alt text-blue-500 mr-1.5"></i> Surat Keterangan Aktif</h5>
+          <p class="text-[11px] text-slate-500 leading-relaxed">Digunakan untuk kebutuhan tunjangan orang tua ASN/Swasta (Tunjangan TASPEN, BPJS). Klik untuk mengajukan.</p>
+        </div>
+        <div onclick="ajukanSuratSpesifik('2')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-emerald-500 hover:shadow-md transition cursor-pointer group">
+          <h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-file-signature text-emerald-500 mr-1.5"></i> Surat Keterangan</h5>
+          <p class="text-[11px] text-slate-500 leading-relaxed">Digunakan untuk kebutuhan Surat Keterangan, Kehilangan, dan Administrasi umum lainnya. Klik untuk mengajukan.</p>
+        </div>
+        <div onclick="ajukanSuratSpesifik('3')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-amber-500 hover:shadow-md transition cursor-pointer group">
+          <h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-briefcase text-amber-500 mr-1.5"></i> Surat Pengantar OJT</h5>
+          <p class="text-[11px] text-slate-500 leading-relaxed">Digunakan untuk kebutuhan persyaratan pengajuan OJT ke pihak Industri/Perusahaan. Klik untuk mengajukan.</p>
+        </div>
+        <div onclick="ajukanSuratSpesifik('5')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-purple-500 hover:shadow-md transition cursor-pointer group">
+          <h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-graduation-cap text-purple-500 mr-1.5"></i> Keterangan Lulus (SKL)</h5>
+          <p class="text-[11px] text-slate-500 leading-relaxed">Diberikan kepada mahasiswa yang telah mengikuti yudisium sebagai pengganti ijazah sementara. Klik untuk mengajukan.</p>
+        </div>
+        <div onclick="ajukanSuratSpesifik('4')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-rose-500 hover:shadow-md transition cursor-pointer group">
+          <h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-award text-rose-500 mr-1.5"></i> Monitoring Beasiswa</h5>
+          <p class="text-[11px] text-slate-500 leading-relaxed">Digunakan sebagai dokumen persyaratan keberlanjutan penerimaan program Beasiswa. Klik untuk mengajukan.</p>
+        </div>
       </div>
     </div>
   </template>
@@ -153,7 +169,7 @@
     </div>
   </template>
 
-  <!-- FORM PENGAJUAN SURAT (DIREVISI: JURUSAN DI INFORMASI UTAMA) -->
+  <!-- FORM PENGAJUAN SURAT -->
   <template id="view-pengajuan">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 bg-white rounded-2xl border p-5 md:p-6 shadow-sm space-y-6">
@@ -240,7 +256,7 @@
     const RECAPTCHA_SITE_KEY = "6LcktV0tAAAAACumzpws0R_UxCoVnTtgbbFisq4E";
     // -------------------------------------------------------------
 
-    let appState = { role: null, user: null, currentView: 'dashboard', db: [], selectedMhs: null, rejectTargetId: null, editTargetId: null, stats: {total: 0, pending: 0, done: 0, reject: 0, quota: "-"} };
+    let appState = { role: null, user: null, currentView: 'dashboard', db: [], selectedMhs: null, rejectTargetId: null, editTargetId: null, stats: {total: 0, pending: 0, done: 0, reject: 0, quota: "-"}, pendingSuratCode: null };
     const SESSION_LIMIT = 1 * 60 * 60 * 1000; 
 
     function escapeHTML(str) { return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
@@ -342,6 +358,12 @@
       document.getElementById('nav-menu').innerHTML = nav;
     }
 
+    // ==== FITUR BARU: NAVIGASI JALAN PINTAS DASHBOARD ====
+    function ajukanSuratSpesifik(kode) {
+        if (appState.role !== 'mahasiswa') { showToast("Informasi", "Hanya Mahasiswa yang dapat membuat pengajuan surat.", "fa-info-circle"); return; }
+        appState.pendingSuratCode = kode; changeView('pengajuan');
+    }
+
     function changeView(viewName) {
       appState.currentView = viewName; document.getElementById('view-wrapper').innerHTML = ''; document.getElementById('view-wrapper').appendChild(document.getElementById(`view-${viewName}`).content.cloneNode(true));
       if(window.innerWidth < 768) { const sidebar = document.getElementById('main-sidebar'); if (!sidebar.classList.contains('-translate-x-full')) toggleSidebar(); }
@@ -351,12 +373,19 @@
         if(appState.selectedMhs) {
           document.getElementById('mhs-nama').value = appState.selectedMhs.nama; document.getElementById('mhs-nim').value = appState.selectedMhs.nim; document.getElementById('mhs-prodi').value = appState.selectedMhs.prodi; document.getElementById('mhs-semester').value = appState.selectedMhs.semester; document.getElementById('mhs-tahun-akad').value = appState.selectedMhs.tahun_akademik; document.getElementById('mhs-lama-studi').value = appState.selectedMhs.lama_studi;
           document.getElementById('mhs-hp').value = appState.selectedMhs.hp || ""; document.getElementById('umum-ttl').value = appState.selectedMhs.ttl || ""; document.getElementById('umum-alamat').value = appState.selectedMhs.alamat || ""; document.getElementById('umum-ipk').value = appState.selectedMhs.ipk || "";
-          if (document.getElementById('mhs-jurusan')) document.getElementById('mhs-jurusan').value = appState.selectedMhs.jurusan || "-"; // LOAD JURUSAN GLOBAL
+          if (document.getElementById('mhs-jurusan')) document.getElementById('mhs-jurusan').value = appState.selectedMhs.jurusan || "-"; 
         }
         apiGet('getMasterData').then(res => {
           if(res.status === 'success') {
             let optSurat = `<option value="">-- Pilih Jenis Surat --</option>`; res.data.jenisSurat.forEach(s => optSurat += `<option value="${s.id}">${s.nama}</option>`); document.getElementById('mhs-jenis-surat').innerHTML = optSurat;
             let optKep = `<option value="">-- Pilih Keperluan --</option>`; res.data.keperluan.forEach(k => optKep += `<option value="${k}">${k}</option>`); optKep += `<option value="LAINNYA" class="font-bold bg-slate-100">Lainnya (Ketik Manual)</option>`; document.getElementById('mhs-keperluan').innerHTML = optKep;
+            
+            // Terapkan Shortcut Dashboard Jika Ada
+            if (appState.pendingSuratCode) {
+                document.getElementById('mhs-jenis-surat').value = appState.pendingSuratCode;
+                toggleFormDinamis();
+                appState.pendingSuratCode = null; // Bersihkan setelah digunakan
+            }
           }
         });
       } 
@@ -427,7 +456,7 @@
       const payload = {
         nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi, semester: document.getElementById('mhs-semester').value, tahun_akademik: document.getElementById('mhs-tahun-akad').value, no_hp: document.getElementById('mhs-hp').value, 
         tujuan: keperluanVal, kode_surat: jenisSurat, ortu_nama: document.getElementById('ortu-nama').value || "-", ortu_nip: document.getElementById('ortu-nip').value || "-", ortu_pangkat: document.getElementById('ortu-pangkat').value || "-", ortu_instansi: document.getElementById('ortu-instansi').value || "-", 
-        tujuan_pt: document.getElementById('ojt-tujuan').value || document.getElementById('skl-tgl-yudisium')?.value || "-", // DIBERSIHKAN KARENA JURUSAN GLOBAL
+        tujuan_pt: document.getElementById('ojt-tujuan').value || document.getElementById('skl-tgl-yudisium')?.value || "-", 
         alamat_pt: document.getElementById('ojt-alamat').value || document.getElementById('skl-masa-berlaku')?.value || "-", 
         lama_ojt: document.getElementById('ojt-lama').value || "-", rentang_ojt: document.getElementById('ojt-rentang').value || "-", anggota_ojt: JSON.stringify(anggotaOJT),
         umum_ttl: document.getElementById('umum-ttl').value || "-", umum_alamat: document.getElementById('umum-alamat').value || "-", umum_ipk: document.getElementById('umum-ipk').value || "-"
