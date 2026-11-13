@@ -497,10 +497,10 @@
             const dateStr = d.tanggal.split(" ")[0] || d.tanggal; 
             
             let jenisSuratStr = "-";
-            if (d.kode_surat === '1') jenisSuratStr = "S. Ket. Aktif"; 
-            else if (d.kode_surat === '2') jenisSuratStr = "S. Keterangan"; 
-            else if (d.kode_surat === '3') jenisSuratStr = "Pengantar OJT";
-            else if (d.kode_surat === '4') jenisSuratStr = "Mon. Beasiswa";
+            if (d.kode_surat === '1') jenisSuratStr = "Surat Ket. Aktif"; 
+            else if (d.kode_surat === '2') jenisSuratStr = "Surat Keterangan"; 
+            else if (d.kode_surat === '3') jenisSuratStr = "Surat Pengantar OJT";
+            else if (d.kode_surat === '4') jenisSuratStr = "Monitoring Beasiswa";
             else if (d.kode_surat === '5') jenisSuratStr = "Ket. Lulus (SKL)";
             
             markup += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-3 font-semibold">${escapeHTML(dateStr)}</td><td class="p-3 font-mono text-[10px] font-bold">${escapeHTML(d.no_surat)}</td><td class="p-3"><div><p class="font-bold text-slate-800">${escapeHTML(d.nama)}</p><p class="text-[10px] text-slate-400 font-mono">${escapeHTML(d.nim)}</p></div></td><td class="p-3 text-[11px] font-bold text-poltera-navy">${escapeHTML(jenisSuratStr)}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center">${actionBtn}</td></tr>`; 
