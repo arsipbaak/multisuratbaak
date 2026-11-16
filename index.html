@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.com/firebasejs/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://www.google.com/recaptcha/ https://*.firebaseio.com https://*.googleapis.com; img-src 'self' data: blob: https://quickchart.io ./logo-poltera.png; frame-src 'self' https://www.google.com/recaptcha/;">
-  <title>SIPARTA v8 (Firebase Staging)</title>
+  <title>SIPARTA v8 (Firebase Hybrid)</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   
-  <!-- FIREBASE SDK COMPAT (Jembatan ke Firestore) -->
+  <!-- FIREBASE SDK COMPAT -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
@@ -76,7 +76,7 @@
     </main>
   </div>
 
-  <!-- VIEWS DASHBOARD (Sama seperti sebelumnya) -->
+  <!-- VIEWS DASHBOARD -->
   <template id="view-dashboard">
     <div class="space-y-6">
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
@@ -95,26 +95,68 @@
     </div>
   </template>
 
-  <!-- FITUR: DAFTAR ANTREAN (Hybrid: Masih pakai GAS untuk menampilkan data lama) -->
+  <!-- ================= FITUR: FORM PENGAJUAN ================= -->
+  <template id="view-pengajuan">
+    <div class="bg-white rounded-2xl border shadow-sm p-4 md:p-6">
+      <h4 class="font-bold text-lg mb-4 text-slate-800"><i class="fas fa-paper-plane text-poltera-navy mr-2"></i> Form Pengajuan Surat</h4>
+      <form onsubmit="doSubmitPermohonan(event)" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">NRP</label><input type="text" id="mhs-nim" readonly class="w-full p-2.5 border rounded-lg bg-slate-50 text-slate-500 text-sm"></div>
+          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Nama Lengkap</label><input type="text" id="mhs-nama" readonly class="w-full p-2.5 border rounded-lg bg-slate-50 text-slate-500 text-sm"></div>
+          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Program Studi</label><input type="text" id="mhs-prodi" readonly class="w-full p-2.5 border rounded-lg bg-slate-50 text-slate-500 text-sm"></div>
+          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Nomor WhatsApp Aktif</label><input type="text" id="mhs-hp" required class="w-full p-2.5 border rounded-lg text-sm focus:border-poltera-navy focus:ring-1 focus:ring-poltera-navy" placeholder="08123456789"></div>
+        </div>
+        
+        <div class="border-t pt-4">
+          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Jenis Surat</label>
+          <select id="mhs-jenis-surat" onchange="toggleFormDinamis()" required class="w-full p-2.5 border rounded-lg text-sm font-bold text-poltera-navy focus:border-poltera-navy focus:ring-1 focus:ring-poltera-navy"></select>
+        </div>
+
+        <div id="form-group-keperluan" class="hide bg-slate-50 p-4 rounded-xl border">
+          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Tujuan / Keperluan</label>
+          <select id="mhs-keperluan" onchange="toggleKeperluanLainnya()" class="w-full p-2.5 border rounded-lg text-sm bg-white"></select>
+          <input type="text" id="mhs-keperluan-text" class="w-full p-2.5 border rounded-lg text-sm mt-3 hide" placeholder="Ketik keperluan secara rinci...">
+        </div>
+
+        <div class="pt-4 flex justify-end gap-3">
+           <button type="button" onclick="changeView('dashboard')" class="px-5 py-2.5 rounded-xl border text-slate-500 text-xs font-bold hover:bg-slate-50 transition">Batal</button>
+           <button type="submit" class="px-5 py-2.5 rounded-xl bg-poltera-navy text-white text-xs font-bold shadow-md hover:bg-blue-800 transition"><i class="fas fa-bolt mr-2"></i> Kirim Seketika</button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <!-- ================= FITUR: DAFTAR ANTREAN REAL-TIME ================= -->
   <template id="view-riwayat">
     <div class="bg-white rounded-2xl border shadow-sm flex flex-col h-full max-h-[85vh]">
       <div class="p-4 border-b flex flex-col md:flex-row justify-between items-center bg-slate-50 gap-3">
-        <h4 class="font-bold text-sm shrink-0">Daftar Antrean Surat (GAS Engine)</h4>
+          <h4 class="font-bold text-sm shrink-0"><i class="fas fa-bolt text-emerald-500 mr-2"></i>Antrean Surat Real-Time</h4>
       </div>
-      <div class="overflow-x-auto flex-1 p-8 text-center text-slate-500">
-         <i class="fas fa-tools text-4xl text-slate-300 mb-3"></i>
-         <p>Fase 1: Uji Coba Login Firebase Selesai.</p>
-         <p class="text-xs mt-2">Daftar tabel antrean akan dihubungkan ke Firestore pada Fase 2.</p>
+      <div class="overflow-x-auto flex-1">
+          <table class="w-full text-left border-collapse min-w-[800px]"><thead class="bg-slate-100 text-slate-500 text-[10px] font-extrabold uppercase border-b sticky top-0 z-10"><tr><th class="p-3">Waktu</th><th class="p-3">No Surat / ID</th><th class="p-3">Mahasiswa</th><th class="p-3">Jenis</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Tindakan</th></tr></thead><tbody class="text-xs divide-y divide-slate-100" id="fb-table-body"><tr><td colspan="6" class="p-8 text-center"><i class="fas fa-spinner fa-spin mr-2"></i> Menghubungkan ke Firestore...</td></tr></tbody></table>
       </div>
     </div>
   </template>
+
+  <!-- ================= MODAL ALASAN PENOLAKAN ================= -->
+  <div id="reject-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center backdrop-blur-sm hide">
+    <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl transform transition-all border-t-4 border-rose-500">
+      <h3 class="text-lg font-extrabold text-slate-800 mb-1"><i class="fas fa-exclamation-circle text-rose-500 mr-2"></i> Tolak Dokumen</h3>
+      <p class="text-[11px] font-semibold text-slate-500 mb-4 leading-relaxed">Berikan alasan penolakan. Pesan ini langsung dikirim ke WhatsApp mahasiswa bersangkutan.</p>
+      <textarea id="reject-reason" rows="3" class="w-full p-3 border rounded-xl text-sm mb-5 focus:border-rose-500 focus:ring-1 focus:ring-rose-500" placeholder="Contoh: Tanda tangan belum lengkap..."></textarea>
+      <div class="flex justify-end gap-3">
+        <button onclick="closeRejectModal()" class="px-4 py-2.5 rounded-xl font-bold text-slate-500 border hover:bg-slate-50 text-xs transition">Batal</button>
+        <button onclick="submitRejectForm()" class="px-4 py-2.5 rounded-xl font-bold bg-rose-600 text-white shadow-md hover:bg-rose-700 text-xs transition"><i class="fas fa-paper-plane mr-2"></i> Kirim Penolakan</button>
+      </div>
+    </div>
+  </div>
 
   <!-- TOAST NOTIFICATION -->
   <div id="app-toast" class="fixed bottom-5 right-5 left-5 md:left-auto bg-white border-l-4 border-slate-900 shadow-2xl rounded-xl px-5 py-4 hide flex items-center gap-3.5 z-50 transition-all"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm shrink-0" id="toast-icon-box"></div><div><h5 class="font-bold text-xs" id="toast-title">Notifikasi</h5><p class="text-[10px] text-slate-500" id="toast-desc">Memproses...</p></div></div>
 
   <script>
-   // -------------------------------------------------------------
-    // INISIALISASI FIREBASE
+    // -------------------------------------------------------------
+    // INISIALISASI FIREBASE & GAS MICROSERVICE
     // -------------------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyBLMONLXydW3nqBKnbVh7y6IoeeCXkMveA",
@@ -124,21 +166,19 @@
       messagingSenderId: "1019784565445",
       appId: "1:1019784565445:web:4d01687606461ef0e456ac",
       measurementId: "G-5R258DP34L"
-     
     };
-     const GAS_MICROSERVICE_URL = "https://script.google.com/macros/s/AKfycbxJbTFcvIVLjiqqgVX83RGcI1hLm5uW2Nq9YzLEb69kVwLvYGR_Fx75fvpAd1KSVQfpDg/exec";
+
+    // PASTIKAN INI ADALAH URL DEPLOY BARU JIKA ADA ERROR CETAK PDF
+    const GAS_MICROSERVICE_URL = "https://script.google.com/macros/s/AKfycbxJbTFcvIVLjiqqgVX83RGcI1hLm5uW2Nq9YzLEb69kVwLvYGR_Fx75fvpAd1KSVQfpDg/exec";
+    
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     // -------------------------------------------------------------
 
     let appState = { role: null, user: null, currentView: 'dashboard', selectedMhs: null, pendingSuratCode: null };
-    let unsubscribeRiwayat = null; // Menyimpan koneksi real-time agar tidak bocor
+    let unsubscribeRiwayat = null; 
     
-    // Master Data Sementara (Hardcoded untuk Staging Firebase)
-    const MASTER_JENIS = [
-        {id: "1", nama: "Surat Keterangan Aktif"}, {id: "2", nama: "Surat Keterangan"},
-        {id: "3", nama: "Surat Pengantar OJT"}, {id: "4", nama: "Monitoring Beasiswa"}, {id: "5", nama: "Keterangan Lulus (SKL)"}
-    ];
+    const MASTER_JENIS = [ {id: "1", nama: "Surat Keterangan Aktif"}, {id: "2", nama: "Surat Keterangan"}, {id: "3", nama: "Surat Pengantar OJT"}, {id: "4", nama: "Monitoring Beasiswa"}, {id: "5", nama: "Keterangan Lulus (SKL)"} ];
     const MASTER_KEPERLUAN = ["Tunjangan Gaji Orang Tua", "Persyaratan Beasiswa", "Pembuatan Rekening Bank", "Kehilangan KTM", "Persyaratan Magang / OJT"];
 
     function validasiInput(input) { if (selectedAuthRole === 'mahasiswa') input.value = input.value.replace(/[^0-9]/g, ''); }
@@ -190,7 +230,7 @@
     }
     
     function handleLogout() { 
-        if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } // Matikan koneksi real-time saat logout
+        if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } 
         appState.role = null; appState.user = null; localStorage.clear(); document.getElementById('app-screen').classList.add('hide'); document.getElementById('login-screen').classList.remove('hide'); kembaliKePilihanRole(); 
     }
 
@@ -210,33 +250,24 @@
     }
 
     function changeView(viewName) {
-      appState.currentView = viewName; document.getElementById('view-wrapper').innerHTML = ''; document.getElementById('view-wrapper').appendChild(document.getElementById(`view-${viewName}`).content.cloneNode(true));
+      appState.currentView = viewName; 
+      document.getElementById('view-wrapper').innerHTML = ''; 
+      document.getElementById('view-wrapper').appendChild(document.getElementById(`view-${viewName}`).content.cloneNode(true));
       if(window.innerWidth < 768) { const sidebar = document.getElementById('main-sidebar'); if (!sidebar.classList.contains('-translate-x-full')) toggleSidebar(); }
       
       if(viewName === 'dashboard' && appState.role === 'admin') { document.getElementById('card-quota').style.display = 'flex'; }
       else if(viewName === 'pengajuan') { setupFormPengajuan(); }
-      else if(viewName === 'riwayat') { 
-          // Ubah template tampilan riwayat untuk siap menerima data
-          document.getElementById('view-wrapper').innerHTML = `
-          <div class="bg-white rounded-2xl border shadow-sm flex flex-col h-full max-h-[85vh]">
-            <div class="p-4 border-b flex flex-col md:flex-row justify-between items-center bg-slate-50 gap-3">
-                <h4 class="font-bold text-sm shrink-0"><i class="fas fa-bolt text-emerald-500 mr-2"></i>Antrean Surat Real-Time</h4>
-            </div>
-            <div class="overflow-x-auto flex-1">
-                <table class="w-full text-left border-collapse min-w-[800px]"><thead class="bg-slate-100 text-slate-500 text-[10px] font-extrabold uppercase border-b sticky top-0 z-10"><tr><th class="p-3">Waktu</th><th class="p-3">No Surat / ID</th><th class="p-3">Mahasiswa</th><th class="p-3">Jenis</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Tindakan</th></tr></thead><tbody class="text-xs divide-y divide-slate-100" id="fb-table-body"><tr><td colspan="6" class="p-8 text-center"><i class="fas fa-spinner fa-spin mr-2"></i> Menghubungkan ke Firestore...</td></tr></tbody></table>
-            </div>
-          </div>`;
-          listenToRiwayatFirestore(); 
-      }
+      else if(viewName === 'riwayat') { listenToRiwayatFirestore(); }
     }
 
     // =========================================================================
-    // FASE 2: FIRESTORE PENGAJUAN & REAL-TIME LISTENER
+    // FASE 2: FIRESTORE PENGAJUAN (MAHASISWA)
     // =========================================================================
     function setupFormPengajuan() {
         if(appState.selectedMhs) {
-          document.getElementById('mhs-nama').value = appState.selectedMhs.nama || ""; document.getElementById('mhs-nim').value = appState.selectedMhs.nim || ""; document.getElementById('mhs-prodi').value = appState.selectedMhs.prodi || ""; document.getElementById('mhs-semester').value = appState.selectedMhs.semester || ""; document.getElementById('mhs-tahun-akad').value = appState.selectedMhs.tahun_akademik || ""; 
-          if(document.getElementById('mhs-jurusan')) document.getElementById('mhs-jurusan').value = appState.selectedMhs.jurusan || "-";
+          document.getElementById('mhs-nama').value = appState.selectedMhs.nama || ""; 
+          document.getElementById('mhs-nim').value = appState.selectedMhs.nim || ""; 
+          document.getElementById('mhs-prodi').value = appState.selectedMhs.prodi || ""; 
         }
         let optSurat = `<option value="">-- Pilih Jenis Surat --</option>`; MASTER_JENIS.forEach(s => optSurat += `<option value="${s.id}">${s.nama}</option>`); document.getElementById('mhs-jenis-surat').innerHTML = optSurat;
         let optKep = `<option value="">-- Pilih Keperluan --</option>`; MASTER_KEPERLUAN.forEach(k => optKep += `<option value="${k}">${k}</option>`); optKep += `<option value="LAINNYA" class="font-bold bg-slate-100">Lainnya (Ketik Manual)</option>`; document.getElementById('mhs-keperluan').innerHTML = optKep;
@@ -249,7 +280,6 @@
       let keperluanVal = document.getElementById('mhs-keperluan').value; 
       if (keperluanVal === 'LAINNYA') keperluanVal = document.getElementById('mhs-keperluan-text').value;
 
-      // Bentuk Dokumen NoSQL Firebase
       const payload = {
         nim: appState.selectedMhs.nim,
         nama: appState.selectedMhs.nama,
@@ -259,8 +289,7 @@
         no_hp: document.getElementById('mhs-hp').value || "-",
         status: "Menunggu Verifikasi",
         no_surat: "-",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        // Data ortu/umum bisa ditambahkan sesuai input jika formnya di-unhide
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
       showToast("Menyimpan", "Mengirim ke Firestore...", "fa-spinner fa-spin");
@@ -271,7 +300,9 @@
       } catch(e) { showToast("Gagal", e.message, "fa-times"); }
     }
 
-// 🔥 KEAJAIBAN REAL-TIME FIREBASE (DIPERBARUI DENGAN TOMBOL PDF & TOLAK) 🔥
+    // =========================================================================
+    // FASE 2.5: LISTENER REAL-TIME (SEKARANG DILENGKAPI TOMBOL DOWNLOAD)
+    // =========================================================================
     function listenToRiwayatFirestore() {
         if(unsubscribeRiwayat) unsubscribeRiwayat(); 
         
@@ -297,10 +328,8 @@
                 let actionBtn = `<div class="flex gap-1 justify-center">`;
                 
                 if(d.status === "Selesai" && d.link_pdf) {
-                    // Tombol Unduh PDF jika sudah selesai
                     actionBtn += `<a href="${d.link_pdf}" target="_blank" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition" title="Unduh PDF"><i class="fas fa-download"></i></a>`;
                 } else if(appState.role === 'admin' && d.status === "Menunggu Verifikasi") {
-                    // Tombol Setuju & Tolak untuk Admin
                     actionBtn += `<button onclick="approveFirebase('${doc.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition"><i class="fas fa-check"></i></button>`;
                     actionBtn += `<button onclick="openRejectModal('${doc.id}')" class="bg-rose-50 text-rose-600 border border-rose-100 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-rose-100 transition"><i class="fas fa-times"></i></button>`;
                 }
@@ -314,16 +343,14 @@
     }
 
     // =====================================================================
-    // FUNGSI ADMIN HYBRID (Menghubungkan Firestore + GAS Microservice)
+    // FASE 3: FUNGSI ADMIN HYBRID (GAS + Firebase)
     // =====================================================================
     async function approveFirebase(docId) {
         showToast("Mencetak PDF...", "Mengirim instruksi ke Microservice", "fa-spinner fa-spin");
         try {
-            // 1. Ambil data utuh dari Firestore
             const doc = await db.collection("pengajuan").doc(docId).get();
             const data = doc.data();
 
-            // 2. Siapkan paket data untuk dikirim ke GAS
             const payloadData = {
                 nim: data.nim, nama: data.nama, prodi: data.prodi, kode_surat: data.kode_surat, 
                 no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", 
@@ -339,23 +366,17 @@
             form.append('action', 'cetakDokumen');
             form.append('data', JSON.stringify(payloadData));
 
-            // 3. Panggil API GAS untuk cetak PDF & WA
             const res = await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form }).then(r => r.json());
 
             if (res.status === 'success') {
-                // 4. Update status & link PDF ke Firebase (Otomatis tampil di layar mhs)
                 await db.collection("pengajuan").doc(docId).update({ 
                     status: "Selesai", 
                     no_surat: res.no_surat,
                     link_pdf: res.link_pdf
                 });
                 showToast("Sukses!", "PDF jadi & Surat Disetujui!", "fa-bolt text-emerald-500");
-            } else {
-                showToast("Gagal Cetak", res.message, "fa-times");
-            }
-        } catch(e) { 
-            showToast("Error Jaringan", "Gagal menghubungi Microservice.", "fa-wifi"); 
-        }
+            } else { showToast("Gagal Cetak", res.message, "fa-times"); }
+        } catch(e) { showToast("Error Jaringan", "Gagal menghubungi Microservice.", "fa-wifi"); }
     }
 
     let rejectTargetId = null;
@@ -373,19 +394,17 @@
             form.append('action', 'notifTolak');
             form.append('data', JSON.stringify({ no_hp: doc.data().no_hp, alasan: alasan }));
             
-            // Tembak GAS untuk kirim WA
             await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form });
-
-            // Update Firebase
             await db.collection("pengajuan").doc(rejectTargetId).update({ status: "Ditolak", alasan_tolak: alasan });
             
             showToast("Ditolak", "Surat ditolak & Mahasiswa telah di-WA.", "fa-check");
             closeRejectModal();
-        } catch(e) {
-            showToast("Error", "Gagal menolak dokumen.", "fa-wifi");
-        }
+        } catch(e) { showToast("Error", "Gagal menolak dokumen.", "fa-wifi"); }
     }
 
+    // =====================================================================
+    // UTILITY
+    // =====================================================================
     function updateStats(tot, pend, done, rej) {
         if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = tot;
         if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pend;
@@ -394,12 +413,10 @@
     }
 
     function toggleFormDinamis() {
-      // Fungsi penampil form statis (sama seperti sebelumnya, dipersingkat untuk fokus logika)
       const jenisVal = document.getElementById('mhs-jenis-surat').value;
-      const grpOrtu = document.getElementById('form-group-ortu'); const grpUmum = document.getElementById('form-group-umum'); const grpKep = document.getElementById('form-group-keperluan');
-      if(grpOrtu) grpOrtu.style.display = 'none'; if(grpUmum) grpUmum.style.display = 'none'; if(grpKep) grpKep.style.display = 'none';
-      if (jenisVal === '1') { if(grpOrtu) grpOrtu.style.display = 'block'; if(grpKep) grpKep.style.display = 'block'; } 
-      else if (jenisVal === '2') { if(grpUmum) grpUmum.style.display = 'block'; if(grpKep) grpKep.style.display = 'block'; } 
+      const grpKep = document.getElementById('form-group-keperluan');
+      if(grpKep) grpKep.style.display = 'none';
+      if (jenisVal === '1' || jenisVal === '2') { if(grpKep) grpKep.style.display = 'block'; } 
     }
     function toggleKeperluanLainnya() { const val = document.getElementById('mhs-keperluan').value; const textInput = document.getElementById('mhs-keperluan-text'); if(val === 'LAINNYA') { textInput.classList.remove('hide'); } else { textInput.classList.add('hide'); } }
     function showToast(title, desc, iconClass) { document.getElementById('toast-title').innerText = title; document.getElementById('toast-desc').innerText = desc; document.getElementById('toast-icon-box').innerHTML = `<i class="fas ${iconClass}"></i>`; document.getElementById('app-toast').classList.remove('hide'); setTimeout(() => document.getElementById('app-toast').classList.add('hide'), 3000); }
