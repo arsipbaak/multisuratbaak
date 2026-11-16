@@ -271,17 +271,16 @@
       } catch(e) { showToast("Gagal", e.message, "fa-times"); }
     }
 
-    // 🔥 KEAJAIBAN REAL-TIME FIREBASE 🔥
+// 🔥 KEAJAIBAN REAL-TIME FIREBASE (DIPERBARUI DENGAN TOMBOL PDF & TOLAK) 🔥
     function listenToRiwayatFirestore() {
-        if(unsubscribeRiwayat) unsubscribeRiwayat(); // Hapus koneksi lama jika ada
+        if(unsubscribeRiwayat) unsubscribeRiwayat(); 
         
         let query = db.collection("pengajuan").orderBy("createdAt", "desc");
         if(appState.role === 'mahasiswa') { query = query.where("nim", "==", appState.user.nim); }
 
-        // onSnapshot = Listen secara Real-Time. Akan memicu otomatis setiap ada data berubah!
         unsubscribeRiwayat = query.onSnapshot((snapshot) => {
             const container = document.getElementById('fb-table-body');
-            if(!container) return; // Jika user pindah menu, abaikan
+            if(!container) return; 
             
             if (snapshot.empty) { container.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">Belum ada pengajuan.</td></tr>`; updateStats(0,0,0,0); return; }
             
@@ -295,31 +294,96 @@
                 let timeStr = d.createdAt ? new Date(d.createdAt.toDate()).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) : "Baru Saja";
                 let jenisStr = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Surat Lain";
 
-                let actionBtn = `<div class="flex gap-1 justify-center"><button class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg text-xs font-bold" title="Detail"><i class="fas fa-eye"></i></button>`;
-                if(appState.role === 'admin' && d.status === "Menunggu Verifikasi") {
-                    // Tombol Setuju Langsung Tembak Update Firebase
-                    actionBtn += `<button onclick="approveFirebase('${doc.id}')" class="bg-emerald-600 text-white px-2 py-1 rounded-lg text-xs font-bold"><i class="fas fa-check"></i></button>`;
+                let actionBtn = `<div class="flex gap-1 justify-center">`;
+                
+                if(d.status === "Selesai" && d.link_pdf) {
+                    // Tombol Unduh PDF jika sudah selesai
+                    actionBtn += `<a href="${d.link_pdf}" target="_blank" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition" title="Unduh PDF"><i class="fas fa-download"></i></a>`;
+                } else if(appState.role === 'admin' && d.status === "Menunggu Verifikasi") {
+                    // Tombol Setuju & Tolak untuk Admin
+                    actionBtn += `<button onclick="approveFirebase('${doc.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition"><i class="fas fa-check"></i></button>`;
+                    actionBtn += `<button onclick="openRejectModal('${doc.id}')" class="bg-rose-50 text-rose-600 border border-rose-100 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-rose-100 transition"><i class="fas fa-times"></i></button>`;
                 }
                 actionBtn += `</div>`;
 
-                markup += `<tr class="border-b hover:bg-slate-50"><td class="p-3 font-semibold text-[10px]">${timeStr}</td><td class="p-3 font-mono text-[10px] font-bold text-slate-400">${doc.id.substring(0,6)}...</td><td class="p-3"><div><p class="font-bold text-slate-800">${d.nama}</p><p class="text-[10px] font-mono">${d.nim}</p></div></td><td class="p-3 text-[11px] font-bold text-poltera-navy">${jenisStr}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center">${actionBtn}</td></tr>`;
+                markup += `<tr class="border-b hover:bg-slate-50"><td class="p-3 font-semibold text-[10px]">${timeStr}</td><td class="p-3 font-mono text-[10px] font-bold text-slate-400">${d.no_surat || doc.id.substring(0,6)}</td><td class="p-3"><div><p class="font-bold text-slate-800">${d.nama}</p><p class="text-[10px] font-mono">${d.nim}</p></div></td><td class="p-3 text-[11px] font-bold text-poltera-navy">${jenisStr}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center">${actionBtn}</td></tr>`;
             });
             container.innerHTML = markup;
             updateStats(t_tot, t_pend, t_done, t_rej);
-        }, (error) => {
-             console.error("Firestore Listen Error:", error);
-             document.getElementById('fb-table-body').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-rose-500">Gagal menarik data Real-Time. Pastikan Firestore Index sudah siap.</td></tr>`;
         });
     }
 
-    // Fungsi Admin (Real-Time Update)
+    // =====================================================================
+    // FUNGSI ADMIN HYBRID (Menghubungkan Firestore + GAS Microservice)
+    // =====================================================================
     async function approveFirebase(docId) {
-        showToast("Memproses", "Menyetujui dokumen...", "fa-spinner fa-spin");
+        showToast("Mencetak PDF...", "Mengirim instruksi ke Microservice", "fa-spinner fa-spin");
         try {
-            await db.collection("pengajuan").doc(docId).update({ status: "Selesai" });
-            // TOAST SUKSES. Tabel akan otomatis update berkat onSnapshot!
-            showToast("Sukses", "Dokumen disetujui seketika!", "fa-bolt text-emerald-500");
-        } catch(e) { showToast("Gagal", e.message, "fa-times"); }
+            // 1. Ambil data utuh dari Firestore
+            const doc = await db.collection("pengajuan").doc(docId).get();
+            const data = doc.data();
+
+            // 2. Siapkan paket data untuk dikirim ke GAS
+            const payloadData = {
+                nim: data.nim, nama: data.nama, prodi: data.prodi, kode_surat: data.kode_surat, 
+                no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", 
+                tahun_akademik: data.tahun_akademik || "-", ortu_nama: data.ortu_nama || "-", 
+                ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", 
+                ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", 
+                umum_alamat: data.umum_alamat || "-", umum_ipk: data.umum_ipk || "-", 
+                tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", 
+                lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-"
+            };
+
+            const form = new URLSearchParams();
+            form.append('action', 'cetakDokumen');
+            form.append('data', JSON.stringify(payloadData));
+
+            // 3. Panggil API GAS untuk cetak PDF & WA
+            const res = await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form }).then(r => r.json());
+
+            if (res.status === 'success') {
+                // 4. Update status & link PDF ke Firebase (Otomatis tampil di layar mhs)
+                await db.collection("pengajuan").doc(docId).update({ 
+                    status: "Selesai", 
+                    no_surat: res.no_surat,
+                    link_pdf: res.link_pdf
+                });
+                showToast("Sukses!", "PDF jadi & Surat Disetujui!", "fa-bolt text-emerald-500");
+            } else {
+                showToast("Gagal Cetak", res.message, "fa-times");
+            }
+        } catch(e) { 
+            showToast("Error Jaringan", "Gagal menghubungi Microservice.", "fa-wifi"); 
+        }
+    }
+
+    let rejectTargetId = null;
+    function openRejectModal(id) { rejectTargetId = id; document.getElementById('reject-modal').classList.remove('hide'); }
+    function closeRejectModal() { rejectTargetId = null; document.getElementById('reject-modal').classList.add('hide'); }
+    
+    async function submitRejectForm() {
+        const alasan = document.getElementById('reject-reason').value.trim();
+        if(!alasan) return alert("Isi alasan penolakan!");
+        
+        showToast("Menolak...", "Mengirim Notifikasi WA", "fa-spinner fa-spin");
+        try {
+            const doc = await db.collection("pengajuan").doc(rejectTargetId).get();
+            const form = new URLSearchParams();
+            form.append('action', 'notifTolak');
+            form.append('data', JSON.stringify({ no_hp: doc.data().no_hp, alasan: alasan }));
+            
+            // Tembak GAS untuk kirim WA
+            await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form });
+
+            // Update Firebase
+            await db.collection("pengajuan").doc(rejectTargetId).update({ status: "Ditolak", alasan_tolak: alasan });
+            
+            showToast("Ditolak", "Surat ditolak & Mahasiswa telah di-WA.", "fa-check");
+            closeRejectModal();
+        } catch(e) {
+            showToast("Error", "Gagal menolak dokumen.", "fa-wifi");
+        }
     }
 
     function updateStats(tot, pend, done, rej) {
