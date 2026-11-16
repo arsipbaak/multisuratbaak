@@ -23,6 +23,9 @@
 
   <!-- ==================== UI LOGIN ==================== -->
   <div id="login-screen" class="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-poltera-dark via-slate-800 to-poltera-navy p-4">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-30"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-poltera-accent rounded-full mix-blend-multiply filter blur-[100px] opacity-20"></div>
+
     <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center relative z-10">
       <div class="mb-8">
         <center><div class="w-20 h-20 items-center justify-center"><img src="./logo-poltera.png" alt="Logo Poltera" class="w-15 h-15 object-contain"></div></center>
@@ -99,7 +102,6 @@
              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div><label class="block text-xs font-semibold text-slate-400 mb-1">Nama Lengkap</label><input type="text" id="mhs-nama" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
                 <div><label class="block text-xs font-semibold text-slate-400 mb-1">NRP</label><input type="text" id="mhs-nim" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
-                <!-- JURUSAN ADA DI SINI -->
                 <div><label class="block text-xs font-semibold text-slate-400 mb-1">Jurusan</label><input type="text" id="mhs-jurusan" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
                 <div><label class="block text-xs font-semibold text-slate-400 mb-1">Prodi</label><input type="text" id="mhs-prodi" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
                 <div class="col-span-1 md:col-span-2 grid grid-cols-3 gap-2">
@@ -141,20 +143,37 @@
     </div>
   </template>
 
+  <!-- ================= MODAL PREVIEW DETAIL (MATA) ================= -->
+  <div id="preview-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center hide p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-2xl flex flex-col max-h-[90vh] shadow-2xl">
+      <div class="p-5 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
+        <h4 class="font-bold text-sm text-poltera-navy"><i class="fas fa-search-plus mr-2"></i> Detail Pengajuan Surat</h4>
+        <button onclick="closePreviewModal()" class="text-slate-400 hover:text-rose-500 transition"><i class="fas fa-times text-lg"></i></button>
+      </div>
+      <div class="p-5 overflow-y-auto flex-1 text-xs" id="preview-content"></div>
+      <div class="p-4 border-t flex justify-end bg-slate-50 rounded-b-2xl">
+        <button onclick="closePreviewModal()" class="px-5 py-2.5 border border-slate-300 rounded-xl text-xs font-bold hover:bg-slate-100 transition">Tutup Detail</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= MODAL EDIT (KOREKSI) ================= -->
-  <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center hide p-4">
+  <div id="edit-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center hide p-4 backdrop-blur-sm">
     <div class="bg-white rounded-2xl w-full max-w-xl shadow-2xl flex flex-col">
-      <div class="p-5 border-b bg-amber-50 rounded-t-2xl"><h4 class="font-bold text-sm text-amber-700"><i class="fas fa-pen mr-2"></i> Koreksi Data Pengajuan</h4></div>
+      <div class="p-5 border-b bg-amber-50 rounded-t-2xl flex justify-between items-center">
+         <h4 class="font-bold text-sm text-amber-700"><i class="fas fa-pen mr-2"></i> Koreksi Data Pengajuan</h4>
+         <button onclick="closeEditModal()" class="text-amber-700 hover:text-rose-500 transition"><i class="fas fa-times"></i></button>
+      </div>
       <div class="p-5 text-xs overflow-y-auto max-h-[60vh]" id="edit-content"></div>
       <div class="p-4 border-t flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
-        <button onclick="closeEditModal()" class="px-5 py-2.5 border rounded-xl font-bold bg-white text-slate-500">Batal</button>
-        <button onclick="submitEditForm()" class="px-5 py-2.5 bg-amber-600 text-white rounded-xl font-bold"><i class="fas fa-save mr-1"></i> Simpan Koreksi</button>
+        <button onclick="closeEditModal()" class="px-5 py-2.5 border rounded-xl font-bold bg-white text-slate-500 shadow-sm">Batal</button>
+        <button onclick="submitEditForm()" class="px-5 py-2.5 bg-amber-600 text-white rounded-xl font-bold shadow-md hover:bg-amber-700 transition"><i class="fas fa-save mr-2"></i> Simpan Koreksi</button>
       </div>
     </div>
   </div>
 
   <!-- ================= MODAL ALASAN PENOLAKAN ================= -->
-  <div id="reject-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center hide p-4">
+  <div id="reject-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center hide p-4 backdrop-blur-sm">
     <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl">
       <h3 class="text-lg font-bold text-slate-800 mb-4">Tolak Dokumen</h3>
       <textarea id="reject-reason" rows="3" class="w-full p-3 border rounded-xl text-sm mb-4" placeholder="Ketik alasan penolakan..."></textarea>
@@ -179,12 +198,14 @@
     
     firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-    let appState = { role: null, user: null, currentView: 'dashboard', selectedMhs: null, pendingSuratCode: null };
+    let appState = { role: null, user: null, currentView: 'dashboard', selectedMhs: null, pendingSuratCode: null, fbData: [] };
     let unsubscribeRiwayat = null; 
     let editTargetId = null;
     
     const MASTER_JENIS = [ {id: "1", nama: "Surat Keterangan Aktif"}, {id: "2", nama: "Surat Keterangan"}, {id: "3", nama: "Surat Pengantar OJT"}, {id: "4", nama: "Monitoring Beasiswa"}, {id: "5", nama: "Keterangan Lulus (SKL)"} ];
     const MASTER_KEPERLUAN = ["Tunjangan Gaji Orang Tua", "Persyaratan Beasiswa", "Pembuatan Rekening Bank", "Kehilangan KTM", "Persyaratan Magang / OJT"];
+
+    function escapeHTML(str) { return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
 
     window.onload = function() {
       document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -216,7 +237,7 @@
       changeView('dashboard'); if(!isAutoLogin) showToast("Berhasil", `Login Firebase Sukses!`, "fa-bolt text-emerald-500"); 
     }
     
-    function handleLogout() { if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } appState.role = null; appState.user = null; localStorage.clear(); document.getElementById('app-screen').classList.add('hide'); document.getElementById('login-screen').classList.remove('hide'); kembaliKePilihanRole(); }
+    function handleLogout() { if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } appState.role = null; appState.user = null; appState.fbData = []; localStorage.clear(); document.getElementById('app-screen').classList.add('hide'); document.getElementById('login-screen').classList.remove('hide'); kembaliKePilihanRole(); }
 
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('sidebar-overlay'); if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); } }
 
@@ -238,7 +259,7 @@
     }
 
     // =============================================================
-    // 2. LOGIKA FORM DINAMIS & PENGAJUAN (DISEMPURNAKAN JURUSAN)
+    // 2. LOGIKA FORM DINAMIS & PENGAJUAN
     // =============================================================
     function toggleFormDinamis() {
       const jenisVal = document.getElementById('mhs-jenis-surat').value;
@@ -280,7 +301,6 @@
       if (keperluanVal === 'LAINNYA') { keperluanVal = document.getElementById('mhs-keperluan-text').value; }
       if (jenisSurat === '5') { keperluanVal = "-"; } 
 
-      // FIX BUG JURUSAN: Tambahkan jurusan ke payload Firebase
       const payload = {
         nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi,
         jurusan: document.getElementById('mhs-jurusan')?.value || appState.selectedMhs.jurusan || "-",
@@ -305,7 +325,7 @@
     }
 
     // =============================================================
-    // 3. LISTENER RIWAYAT & EDIT BUTTON UNTUK ADMIN
+    // 3. LISTENER RIWAYAT & TOMBOL AKSI LENGKAP (EYE & EDIT)
     // =============================================================
     function listenToRiwayatFirestore() {
         if(unsubscribeRiwayat) unsubscribeRiwayat(); 
@@ -317,22 +337,30 @@
             if(!container) return; 
             if (snapshot.empty) { container.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">Belum ada pengajuan.</td></tr>`; updateStats(0,0,0,0); return; }
             
-            let docsArr = []; snapshot.forEach(doc => docsArr.push({ id: doc.id, ...doc.data() }));
-            docsArr.sort((a,b) => { let timeA = a.createdAt ? a.createdAt.toMillis() : 0; let timeB = b.createdAt ? b.createdAt.toMillis() : 0; return timeB - timeA; });
+            // Simpan ke Global Array untuk Modal Preview & Edit Instan
+            appState.fbData = []; 
+            snapshot.forEach(doc => appState.fbData.push({ id: doc.id, ...doc.data() }));
+            
+            // Sort Manual
+            appState.fbData.sort((a,b) => { let timeA = a.createdAt ? a.createdAt.toMillis() : 0; let timeB = b.createdAt ? b.createdAt.toMillis() : 0; return timeB - timeA; });
             
             let markup = ''; let t_tot = 0, t_pend = 0, t_done = 0, t_rej = 0;
 
-            docsArr.forEach((d) => {
+            appState.fbData.forEach((d) => {
                 t_tot++; if(d.status === "Menunggu Verifikasi") t_pend++; else if(d.status === "Selesai") t_done++; else t_rej++;
                 let badge = d.status === "Selesai" ? `<span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full font-bold">Disetujui</span>` : d.status === "Ditolak" ? `<span class="px-2 py-1 bg-rose-50 text-rose-600 rounded-full font-bold">Ditolak</span>` : `<span class="px-2 py-1 bg-amber-50 text-amber-600 rounded-full font-bold animate-pulse">Menunggu</span>`; 
                 let timeStr = d.createdAt ? new Date(d.createdAt.toDate()).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) : "Baru Saja";
                 let jenisStr = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Surat Lain";
 
                 let actionBtn = `<div class="flex gap-1 justify-center">`;
+                
+                // TOMBOL PREVIEW DETAIL SELALU ADA UNTUK SEMUA (MHS & ADMIN)
+                actionBtn += `<button onclick="openPreviewModal('${d.id}')" class="bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Preview Detail"><i class="fas fa-eye"></i></button>`;
+
                 if(d.status === "Selesai" && d.link_pdf) {
                     actionBtn += `<a href="${d.link_pdf}" target="_blank" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition" title="Unduh PDF"><i class="fas fa-download"></i></a>`;
                 } else if(appState.role === 'admin' && d.status === "Menunggu Verifikasi") {
-                    // FIX BUG EDIT: Tombol Edit dimasukkan kembali!
+                    // TOMBOL KOREKSI KEMBALI
                     actionBtn += `<button onclick="openEditModal('${d.id}')" class="bg-amber-50 text-amber-600 border border-amber-100 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-amber-100 transition" title="Koreksi Data"><i class="fas fa-pen"></i></button>`;
                     actionBtn += `<button onclick="approveFirebase('${d.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition" title="Setujui Dokumen"><i class="fas fa-check"></i></button>`;
                     actionBtn += `<button onclick="openRejectModal('${d.id}')" class="bg-rose-50 text-rose-600 border border-rose-100 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-rose-100 transition" title="Tolak"><i class="fas fa-times"></i></button>`;
@@ -345,32 +373,82 @@
     }
 
     // =============================================================
-    // 4. LOGIKA EDIT & KOREKSI (ADMIN)
+    // 4. LOGIKA PREVIEW DETAIL (MATA) & EDIT
     // =============================================================
-    async function openEditModal(id) {
-        editTargetId = id; const doc = await db.collection("pengajuan").doc(id).get(); const data = doc.data();
-        let html = `<div class="space-y-4">
-            <div><label class="block text-slate-500 mb-1">Nomor WhatsApp Aktif</label><input type="text" id="e-hp" value="${data.no_hp || ''}" class="w-full border p-2.5 rounded-xl outline-none focus:ring-1"></div>
-            <div><label class="block text-slate-500 mb-1">Keperluan / Tujuan</label><input type="text" id="e-tujuan" value="${data.tujuan || ''}" class="w-full border p-2.5 rounded-xl outline-none focus:ring-1"></div>`;
-        if (data.kode_surat === '1') { html += `<div><label class="block text-slate-500 mb-1">Nama Orang Tua</label><input type="text" id="e-ortu" value="${data.ortu_nama || ''}" class="w-full border p-2.5 rounded-xl outline-none focus:ring-1"></div>`; }
-        if (['2','4','5'].includes(data.kode_surat)) {
-            html += `<div><label class="block text-slate-500 mb-1">Tempat, Tgl Lahir</label><input type="text" id="e-ttl" value="${data.umum_ttl || ''}" class="w-full border p-2.5 rounded-xl outline-none focus:ring-1"></div>`;
-            html += `<div><label class="block text-slate-500 mb-1">Alamat Lengkap</label><input type="text" id="e-alamat" value="${data.umum_alamat || ''}" class="w-full border p-2.5 rounded-xl outline-none focus:ring-1"></div>`;
-            html += `<div><label class="block text-slate-500 mb-1">SKS / IPK Terakhir</label><input type="text" id="e-ipk" value="${data.umum_ipk || ''}" class="w-full border p-2.5 rounded-xl outline-none focus:ring-1"></div>`;
-        }
-        html += `</div>`;
-        document.getElementById('edit-content').innerHTML = html; document.getElementById('edit-modal').classList.remove('hide');
+    function openPreviewModal(id) { 
+      const data = appState.fbData.find(d => d.id === id); if(!data) return; 
+      let timeStr = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('id-ID') : "-";
+      let html = `<table class="w-full text-left border-collapse bg-white rounded-xl overflow-hidden border"><tbody>
+        <tr class="border-b"><th class="p-3 w-1/3 text-slate-500 bg-slate-50 border-r">ID Database</th><td class="p-3 font-mono font-bold">${escapeHTML(data.id)}</td></tr>
+        <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Waktu Pengajuan</th><td class="p-3">${escapeHTML(timeStr)}</td></tr>
+        <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Status</th><td class="p-3 font-bold text-poltera-navy">${escapeHTML(data.status)}</td></tr>
+        <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Lengkap</th><td class="p-3 font-bold">${escapeHTML(data.nama)}</td></tr>
+        <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">NRP</th><td class="p-3 font-mono">${escapeHTML(data.nim)}</td></tr>
+        <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Jurusan / Prodi</th><td class="p-3">${escapeHTML(data.jurusan || "-")} / ${escapeHTML(data.prodi)}</td></tr>
+        <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Semester / Thn Akademik</th><td class="p-3">Semester ${escapeHTML(data.semester)} / ${escapeHTML(data.tahun_akademik)}</td></tr>`; 
+        
+      if(data.kode_surat === '1') { 
+          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Ortu / Wali</th><td class="p-3">${escapeHTML(data.ortu_nama)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">NIP Wali</th><td class="p-3">${escapeHTML(data.ortu_nip)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Pangkat / Golongan</th><td class="p-3">${escapeHTML(data.ortu_pangkat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Instansi / Unit Kerja</th><td class="p-3">${escapeHTML(data.ortu_instansi)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tujuan / Keperluan</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; 
+      } 
+      else if(data.kode_surat === '2') { 
+          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat Lengkap</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">IPK Terakhir</th><td class="p-3 font-bold">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tujuan / Keperluan</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; 
+      } 
+      else if(data.kode_surat === '3') { 
+          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Perusahaan PT</th><td class="p-3 font-bold">${escapeHTML(data.tujuan_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat PT</th><td class="p-3">${escapeHTML(data.alamat_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Lama Waktu OJT</th><td class="p-3">${escapeHTML(data.lama_ojt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Rentang Pelaksanaan</th><td class="p-3">${escapeHTML(data.rentang_ojt)}</td></tr>`; 
+          try { let anggota = JSON.parse(data.anggota_ojt); if(anggota.length > 0) { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r align-top">Anggota OJT</th><td class="p-3"><ul class="list-decimal pl-4 space-y-1">`; anggota.forEach(a => { html += `<li><span class="font-bold">${escapeHTML(a.nama)}</span> <span class="text-[10px] text-slate-500 font-mono">(${escapeHTML(a.nim)}) - ${escapeHTML(a.prodi)}</span></li>`; }); html += `</ul></td></tr>`; } } catch(e) {} 
+          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr>`;
+      }
+      else if(data.kode_surat === '4') { 
+          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat KK</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">IPK Terakhir</th><td class="p-3 font-bold">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Beasiswa</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; 
+      } 
+      else if(data.kode_surat === '5') { 
+          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat Lengkap</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">SKS / IPK</th><td class="p-3 font-bold text-poltera-navy">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tanggal Yudisium</th><td class="p-3 font-semibold">${escapeHTML(data.tujuan_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Masa Berlaku SKL</th><td class="p-3">${escapeHTML(data.alamat_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr>`; 
+      }
+      html += `</tbody></table>`; document.getElementById('preview-content').innerHTML = html; document.getElementById('preview-modal').classList.remove('hide'); 
+    }
+    function closePreviewModal() { document.getElementById('preview-modal').classList.add('hide'); }
+
+    function openEditModal(id) {
+       const data = appState.fbData.find(d => d.id === id); if(!data) return; editTargetId = id;
+       let html = `<div class="space-y-4">`;
+       html += `<div class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Semester</label><input type="text" id="e-semester" value="${escapeHTML(data.semester || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Thn Akademik</label><input type="text" id="e-tahun_akademik" value="${escapeHTML(data.tahun_akademik || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div></div>`;
+       html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">No WhatsApp</label><input type="text" id="e-no_hp" value="${escapeHTML(data.no_hp || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+
+       if (data.kode_surat === '1') {
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Nama Ortu/Wali</label><input type="text" id="e-ortu_nama" value="${escapeHTML(data.ortu_nama || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">NIP Wali</label><input type="text" id="e-ortu_nip" value="${escapeHTML(data.ortu_nip || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Pangkat/Golongan</label><input type="text" id="e-ortu_pangkat" value="${escapeHTML(data.ortu_pangkat || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Instansi/Unit Kerja</label><input type="text" id="e-ortu_instansi" value="${escapeHTML(data.ortu_instansi || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Keperluan</label><input type="text" id="e-tujuan" value="${escapeHTML(data.tujuan || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+       } else if (data.kode_surat === '2' || data.kode_surat === '4') {
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Tempat/Tgl Lahir</label><input type="text" id="e-umum_ttl" value="${escapeHTML(data.umum_ttl || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Alamat Lengkap</label><input type="text" id="e-umum_alamat" value="${escapeHTML(data.umum_alamat || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">IPK</label><input type="text" id="e-umum_ipk" value="${escapeHTML(data.umum_ipk || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Keperluan / Beasiswa</label><input type="text" id="e-tujuan" value="${escapeHTML(data.tujuan || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+       } else if (data.kode_surat === '3') {
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Nama Perusahaan</label><input type="text" id="e-tujuan_pt" value="${escapeHTML(data.tujuan_pt || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Alamat Perusahaan</label><input type="text" id="e-alamat_pt" value="${escapeHTML(data.alamat_pt || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Lama OJT</label><input type="text" id="e-lama_ojt" value="${escapeHTML(data.lama_ojt || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Rentang OJT</label><input type="text" id="e-rentang_ojt" value="${escapeHTML(data.rentang_ojt || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div></div>`;
+       } else if (data.kode_surat === '5') {
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Tempat/Tgl Lahir</label><input type="text" id="e-umum_ttl" value="${escapeHTML(data.umum_ttl || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Alamat Lengkap</label><input type="text" id="e-umum_alamat" value="${escapeHTML(data.umum_alamat || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div><label class="block text-[10px] font-semibold text-slate-500 mb-1">SKS / IPK</label><input type="text" id="e-umum_ipk" value="${escapeHTML(data.umum_ipk || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div>`;
+          html += `<div class="grid grid-cols-2 gap-3"><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Tanggal Yudisium</label><input type="text" id="e-tujuan_pt" value="${escapeHTML(data.tujuan_pt || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div><div><label class="block text-[10px] font-semibold text-slate-500 mb-1">Masa Berlaku</label><input type="text" id="e-alamat_pt" value="${escapeHTML(data.alamat_pt || '')}" class="w-full border p-2.5 text-xs rounded-xl focus:ring-1 outline-none"></div></div>`;
+       }
+       html += `</div>`; document.getElementById('edit-content').innerHTML = html; document.getElementById('edit-modal').classList.remove('hide');
     }
     function closeEditModal() { editTargetId = null; document.getElementById('edit-modal').classList.add('hide'); }
 
     async function submitEditForm() {
         showToast("Menyimpan...", "Mengupdate Firestore", "fa-spinner fa-spin");
         try {
-            let updates = { no_hp: document.getElementById('e-hp')?.value || "", tujuan: document.getElementById('e-tujuan')?.value || "" };
-            if(document.getElementById('e-ortu')) updates.ortu_nama = document.getElementById('e-ortu').value;
-            if(document.getElementById('e-ttl')) updates.umum_ttl = document.getElementById('e-ttl').value;
-            if(document.getElementById('e-alamat')) updates.umum_alamat = document.getElementById('e-alamat').value;
-            if(document.getElementById('e-ipk')) updates.umum_ipk = document.getElementById('e-ipk').value;
+            const data = appState.fbData.find(d => d.id === editTargetId);
+            let updates = { semester: document.getElementById('e-semester')?.value || "", tahun_akademik: document.getElementById('e-tahun_akademik')?.value || "", no_hp: document.getElementById('e-no_hp')?.value || "" };
+            
+            if(data.kode_surat === '1') { updates.ortu_nama = document.getElementById('e-ortu_nama').value; updates.ortu_nip = document.getElementById('e-ortu_nip').value; updates.ortu_pangkat = document.getElementById('e-ortu_pangkat').value; updates.ortu_instansi = document.getElementById('e-ortu_instansi').value; updates.tujuan = document.getElementById('e-tujuan').value; }
+            if(data.kode_surat === '2' || data.kode_surat === '4') { updates.umum_ttl = document.getElementById('e-umum_ttl').value; updates.umum_alamat = document.getElementById('e-umum_alamat').value; updates.umum_ipk = document.getElementById('e-umum_ipk').value; updates.tujuan = document.getElementById('e-tujuan').value; }
+            if(data.kode_surat === '3') { updates.tujuan_pt = document.getElementById('e-tujuan_pt').value; updates.alamat_pt = document.getElementById('e-alamat_pt').value; updates.lama_ojt = document.getElementById('e-lama_ojt').value; updates.rentang_ojt = document.getElementById('e-rentang_ojt').value; }
+            if(data.kode_surat === '5') { updates.umum_ttl = document.getElementById('e-umum_ttl').value; updates.umum_alamat = document.getElementById('e-umum_alamat').value; updates.umum_ipk = document.getElementById('e-umum_ipk').value; updates.tujuan_pt = document.getElementById('e-tujuan_pt').value; updates.alamat_pt = document.getElementById('e-alamat_pt').value; }
+            
             await db.collection("pengajuan").doc(editTargetId).update(updates);
             showToast("Sukses", "Data dikoreksi!", "fa-check"); closeEditModal();
         } catch(e) { showToast("Gagal", "Error menyimpan.", "fa-times"); }
@@ -382,24 +460,14 @@
     async function approveFirebase(docId) {
         showToast("Mencetak PDF...", "Memanggil Mesin Dokumen", "fa-spinner fa-spin");
         try {
-            const doc = await db.collection("pengajuan").doc(docId).get(); const data = doc.data();
+            const data = appState.fbData.find(d => d.id === docId);
             
-            // FIX BUG NO SURAT: Menghitung secara real-time dari Firestore!
             const snap = await db.collection("pengajuan").where("status", "==", "Selesai").get();
             const hitungSelesai = snap.size;
             const noSuratGenerator = String(hitungSelesai + 1).padStart(3, '0') + "/PL34/DV.01.18/" + new Date().getFullYear();
 
-            // Payload dikirim ke GAS (Kini menyertakan JURUSAN dan NO SURAT)
             const payloadData = { 
-                nim: data.nim, nama: data.nama, prodi: data.prodi, 
-                jurusan: data.jurusan || "-",  // Jurusan terkirim!
-                no_surat: noSuratGenerator,    // No Surat terkirim!
-                kode_surat: data.kode_surat, no_hp: data.no_hp, tujuan: data.tujuan, 
-                semester: data.semester || "-", tahun_akademik: data.tahun_akademik || "-", 
-                ortu_nama: data.ortu_nama || "-", ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", 
-                ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", umum_alamat: data.umum_alamat || "-", 
-                umum_ipk: data.umum_ipk || "-", tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", 
-                lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-" 
+                nim: data.nim, nama: data.nama, prodi: data.prodi, jurusan: data.jurusan || "-", no_surat: noSuratGenerator, kode_surat: data.kode_surat, no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", tahun_akademik: data.tahun_akademik || "-", ortu_nama: data.ortu_nama || "-", ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", umum_alamat: data.umum_alamat || "-", umum_ipk: data.umum_ipk || "-", tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-" 
             };
             
             const form = new URLSearchParams(); form.append('action', 'cetakDokumen'); form.append('data', JSON.stringify(payloadData));
@@ -421,8 +489,8 @@
         if(!alasan) return alert("Isi alasan penolakan!");
         showToast("Menolak...", "Mengirim Notifikasi WA", "fa-spinner fa-spin");
         try {
-            const doc = await db.collection("pengajuan").doc(rejectTargetId).get();
-            const form = new URLSearchParams(); form.append('action', 'notifTolak'); form.append('data', JSON.stringify({ no_hp: doc.data().no_hp, alasan: alasan }));
+            const data = appState.fbData.find(d => d.id === rejectTargetId);
+            const form = new URLSearchParams(); form.append('action', 'notifTolak'); form.append('data', JSON.stringify({ no_hp: data.no_hp, alasan: alasan }));
             await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form });
             await db.collection("pengajuan").doc(rejectTargetId).update({ status: "Ditolak", alasan_tolak: alasan });
             showToast("Ditolak", "Surat ditolak & Mahasiswa telah di-WA.", "fa-check"); closeRejectModal();
