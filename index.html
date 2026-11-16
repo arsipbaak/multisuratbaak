@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.com/firebasejs/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://www.google.com/recaptcha/ https://*.firebaseio.com https://*.googleapis.com; img-src 'self' data: blob: https://quickchart.io ./logo-poltera.png; frame-src 'self' https://www.google.com/recaptcha/;">
-  <title>SIPARTA v8 (Firebase Hybrid)</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.gstatic.com/firebasejs/; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://script.google.com https://*.googleusercontent.com https://*.firebaseio.com https://*.googleapis.com; img-src 'self' data: blob: https://quickchart.io ./logo-poltera.png; frame-src 'self';">
+  <title>SIPARTA v8 (Firebase Hybrid Full)</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   
-  <!-- FIREBASE SDK COMPAT -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
@@ -24,9 +23,6 @@
 
   <!-- ==================== UI LOGIN ==================== -->
   <div id="login-screen" class="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-poltera-dark via-slate-800 to-poltera-navy p-4">
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-30"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-poltera-accent rounded-full mix-blend-multiply filter blur-[100px] opacity-20"></div>
-
     <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md text-center relative z-10">
       <div class="mb-8">
         <center><div class="w-20 h-20 items-center justify-center"><img src="./logo-poltera.png" alt="Logo Poltera" class="w-15 h-15 object-contain"></div></center>
@@ -41,13 +37,13 @@
 
       <div id="credential-form-section" class="hide space-y-4 text-left border p-5 rounded-2xl bg-slate-50/50">
         <button onclick="kembaliKePilihanRole()" class="text-slate-400 hover:text-poltera-navy mb-2"><i class="fas fa-arrow-left"></i> <span class="text-xs font-bold uppercase ml-1">Kembali</span></button>
-        <form id="login-auth-form" onsubmit="prosesVerifikasiKredensial(event)">
+        <form onsubmit="prosesVerifikasiKredensial(event)">
           <div class="space-y-1 mb-3">
             <label class="block text-[11px] font-bold text-slate-500 uppercase" id="label-field-username">NRP / Username</label>
-            <div class="relative"><span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-user text-xs"></i></span><input type="text" id="auth-username" required placeholder="Masukkan ID..." oninput="validasiInput(this)" class="w-full pl-9 pr-4 py-2.5 border rounded-lg text-xs font-semibold"></div>
+            <div class="relative"><span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-user text-xs"></i></span><input type="text" id="auth-username" required placeholder="Masukkan ID..." class="w-full pl-9 pr-4 py-2.5 border rounded-lg text-xs font-semibold"></div>
           </div>
-          <div class="space-y-1 mb-4" id="password-field-container">
-            <label class="block text-[11px] font-bold text-slate-500 uppercase">Kata Sandi (Password)</label>
+          <div class="space-y-1 mb-4">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase">Kata Sandi</label>
             <div class="relative"><span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-lock text-xs"></i></span><input type="password" id="auth-password" required class="w-full pl-9 pr-4 py-2.5 border rounded-lg text-xs font-semibold"></div>
           </div>
           <button type="submit" class="w-full bg-emerald-600 text-white text-xs font-bold py-3 rounded-xl shadow-md"><i class="fas fa-bolt mr-2"></i> Login via Firebase</button>
@@ -61,7 +57,7 @@
     <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 z-40 hidden md:hidden transition-opacity opacity-0 backdrop-blur-sm"></div>
     <aside id="main-sidebar" class="w-64 bg-poltera-dark text-slate-200 flex flex-col z-50 shadow-2xl absolute md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
       <button onclick="toggleSidebar()" class="md:hidden absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
-      <div class="h-16 flex items-center justify-center gap-3 border-b border-slate-800 bg-slate-900/50"><img src="./logo-poltera.png" alt="Logo Poltera" class="w-9 h-9 object-contain drop-shadow-md"><span class="font-extrabold text-white tracking-widest uppercase text-lg">SIPARTA</span></div>
+      <div class="h-16 flex items-center justify-center gap-3 border-b border-slate-800 bg-slate-900/50"><img src="./logo-poltera.png" class="w-9 h-9 object-contain drop-shadow-md"><span class="font-extrabold text-white tracking-widest uppercase text-lg">SIPARTA</span></div>
       <div class="p-4 border-b border-slate-800 bg-slate-950/40 flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold" id="nav-initial">U</div><div class="overflow-hidden"><p class="text-xs font-bold text-white truncate" id="nav-user-name">User Name</p><p class="text-[9px] text-slate-400 uppercase tracking-widest font-semibold" id="nav-user-role">Role</p></div></div>
       <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto" id="nav-menu"></nav>
       <div class="p-4 border-t border-slate-800"><button onclick="handleLogout()" class="w-full py-2.5 bg-red-600/10 hover:bg-red-600 text-red-400 hover:text-white rounded-xl text-xs font-bold transition flex justify-center gap-2 items-center"><i class="fas fa-sign-out-alt"></i> Keluar Aplikasi</button></div>
@@ -84,45 +80,55 @@
         <div class="bg-white p-4 rounded-2xl border flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"><i class="fas fa-spinner fa-spin"></i></div><div><p class="text-[10px] font-semibold text-slate-400">Menunggu Verif</p><p class="text-xl font-bold text-slate-800" id="stat-pending">0</p></div></div>
         <div class="bg-white p-4 rounded-2xl border flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg"><i class="fas fa-check-circle"></i></div><div><p class="text-[10px] font-semibold text-slate-400">Disetujui</p><p class="text-xl font-bold text-slate-800" id="stat-done">0</p></div></div>
         <div class="bg-white p-4 rounded-2xl border flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg"><i class="fas fa-times-circle"></i></div><div><p class="text-[10px] font-semibold text-slate-400">Ditolak</p><p class="text-xl font-bold text-slate-800" id="stat-reject">0</p></div></div>
-        <div class="bg-white p-4 rounded-2xl border flex items-center gap-4" id="card-quota" style="display: none;"><div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg"><i class="fas fa-server"></i></div><div><p class="text-[10px] font-semibold text-slate-400">Status Server</p><p class="text-sm font-bold text-slate-800 mt-1" id="stat-quota">Firebase</p></div></div>
+        <div class="bg-white p-4 rounded-2xl border flex items-center gap-4" id="card-quota" style="display: none;"><div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg"><i class="fas fa-server"></i></div><div><p class="text-[10px] font-semibold text-slate-400">Status Server</p><p class="text-sm font-bold text-slate-800 mt-1">Firebase</p></div></div>
       </div>
-      
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div onclick="ajukanSuratSpesifik('1')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-blue-500 hover:shadow-md transition cursor-pointer group"><h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-file-alt text-blue-500 mr-1.5"></i> Surat Keterangan Aktif</h5><p class="text-[11px] text-slate-500 leading-relaxed">Klik untuk mengajukan.</p></div>
-        <div onclick="ajukanSuratSpesifik('2')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-emerald-500 hover:shadow-md transition cursor-pointer group"><h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-file-signature text-emerald-500 mr-1.5"></i> Surat Keterangan</h5><p class="text-[11px] text-slate-500 leading-relaxed">Klik untuk mengajukan.</p></div>
-        <div onclick="ajukanSuratSpesifik('3')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-amber-500 hover:shadow-md transition cursor-pointer group"><h5 class="font-extrabold text-slate-800 text-sm mb-2 group-hover:text-poltera-navy transition"><i class="fas fa-briefcase text-amber-500 mr-1.5"></i> Surat Pengantar OJT</h5><p class="text-[11px] text-slate-500 leading-relaxed">Klik untuk mengajukan.</p></div>
+        <div onclick="ajukanSuratSpesifik('1')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-blue-500 hover:shadow-md transition cursor-pointer"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-file-alt text-blue-500 mr-1.5"></i> Surat Keterangan Aktif</h5></div>
+        <div onclick="ajukanSuratSpesifik('2')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-emerald-500 hover:shadow-md transition cursor-pointer"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-file-signature text-emerald-500 mr-1.5"></i> Surat Keterangan</h5></div>
+        <div onclick="ajukanSuratSpesifik('3')" class="p-5 bg-white rounded-2xl border shadow-sm border-l-4 border-l-amber-500 hover:shadow-md transition cursor-pointer"><h5 class="font-extrabold text-slate-800 text-sm mb-2"><i class="fas fa-briefcase text-amber-500 mr-1.5"></i> Surat Pengantar OJT</h5></div>
       </div>
     </div>
   </template>
 
-  <!-- ================= FITUR: FORM PENGAJUAN ================= -->
+  <!-- ================= FITUR: FORM PENGAJUAN (DIKEMBALIKAN UTUH 100%) ================= -->
   <template id="view-pengajuan">
-    <div class="bg-white rounded-2xl border shadow-sm p-4 md:p-6">
-      <h4 class="font-bold text-lg mb-4 text-slate-800"><i class="fas fa-paper-plane text-poltera-navy mr-2"></i> Form Pengajuan Surat</h4>
-      <form onsubmit="doSubmitPermohonan(event)" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">NRP</label><input type="text" id="mhs-nim" readonly class="w-full p-2.5 border rounded-lg bg-slate-50 text-slate-500 text-sm"></div>
-          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Nama Lengkap</label><input type="text" id="mhs-nama" readonly class="w-full p-2.5 border rounded-lg bg-slate-50 text-slate-500 text-sm"></div>
-          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Program Studi</label><input type="text" id="mhs-prodi" readonly class="w-full p-2.5 border rounded-lg bg-slate-50 text-slate-500 text-sm"></div>
-          <div><label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Nomor WhatsApp Aktif</label><input type="text" id="mhs-hp" required class="w-full p-2.5 border rounded-lg text-sm focus:border-poltera-navy focus:ring-1 focus:ring-poltera-navy" placeholder="08123456789"></div>
-        </div>
-        
-        <div class="border-t pt-4">
-          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Jenis Surat</label>
-          <select id="mhs-jenis-surat" onchange="toggleFormDinamis()" required class="w-full p-2.5 border rounded-lg text-sm font-bold text-poltera-navy focus:border-poltera-navy focus:ring-1 focus:ring-poltera-navy"></select>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-white rounded-2xl border p-5 md:p-6 shadow-sm space-y-6">
+        <h4 class="font-bold text-base border-b pb-3">Form Permohonan Layanan Surat</h4>
+        <form class="space-y-6" onsubmit="doSubmitPermohonan(event)">
+          <div class="space-y-4"><h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">A. Pilih Layanan *</h5><select id="mhs-jenis-surat" required onchange="toggleFormDinamis()" class="w-full border p-3 text-xs rounded-xl bg-slate-50 font-bold text-poltera-navy"></select></div>
+          
+          <div class="space-y-4">
+             <h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">B. Informasi Pemohon Utama</h5>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-xs font-semibold text-slate-400 mb-1">Nama Lengkap</label><input type="text" id="mhs-nama" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
+                <div><label class="block text-xs font-semibold text-slate-400 mb-1">NRP</label><input type="text" id="mhs-nim" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
+                <div><label class="block text-xs font-semibold text-slate-400 mb-1">Jurusan</label><input type="text" id="mhs-jurusan" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
+                <div><label class="block text-xs font-semibold text-slate-400 mb-1">Prodi</label><input type="text" id="mhs-prodi" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
+                <div class="col-span-1 md:col-span-2 grid grid-cols-3 gap-2">
+                   <div><label class="block text-[11px] font-semibold text-slate-400 mb-1">Semester</label><input type="text" id="mhs-semester" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl text-center"></div>
+                   <div><label class="block text-[11px] font-semibold text-slate-400 mb-1">Thn Akademik</label><input type="text" id="mhs-tahun-akad" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl text-center"></div>
+                   <div><label class="block text-[11px] font-semibold text-slate-400 mb-1">Lama Studi</label><input type="text" id="mhs-lama-studi" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl text-center"></div>
+                </div>
+             </div>
+          </div>
+          
+          <div class="space-y-4" id="form-group-ortu" style="display: none;"><h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">C. Data Orang Tua / Wali</h5><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Ortu/Wali *</label><input type="text" id="ortu-nama" class="w-full border p-3 text-xs rounded-xl input-ortu"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">NIP Wali (- jika tidak ada)</label><input type="text" id="ortu-nip" class="w-full border p-3 text-xs rounded-xl input-ortu"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Pangkat/Golongan</label><input type="text" id="ortu-pangkat" class="w-full border p-3 text-xs rounded-xl input-ortu"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Instansi / Unit Kerja *</label><input type="text" id="ortu-instansi" class="w-full border p-3 text-xs rounded-xl input-ortu"></div></div></div>
+          
+          <div class="space-y-4" id="form-group-umum" style="display: none;"><h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">C. Data Pelengkap Umum</h5><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label class="block text-[11px] font-semibold text-slate-500 mb-1">Tempat / Tgl Lahir *</label><input type="text" id="umum-ttl" class="w-full border p-3 text-xs rounded-xl input-umum"></div><div><label class="block text-[11px] font-semibold text-slate-500 mb-1" id="label-alamat">Alamat Lengkap *</label><input type="text" id="umum-alamat" class="w-full border p-3 text-xs rounded-xl input-umum"></div><div><label class="block text-[11px] font-semibold text-slate-500 mb-1" id="label-ipk">IPK Terakhir *</label><input type="text" id="umum-ipk" class="w-full border p-3 text-xs rounded-xl input-umum"></div></div></div>
+          
+          <div class="space-y-4" id="form-group-ojt" style="display: none;"><h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider">C. Data Perusahaan (Tujuan OJT)</h5><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Perusahaan / PT *</label><input type="text" id="ojt-tujuan" class="w-full border p-3 text-xs rounded-xl input-ojt"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Alamat Lengkap Perusahaan *</label><input type="text" id="ojt-alamat" class="w-full border p-3 text-xs rounded-xl input-ojt"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Lama Waktu OJT *</label><input type="text" id="ojt-lama" placeholder="Contoh: 3 Bulan" class="w-full border p-3 text-xs rounded-xl input-ojt"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Rentang Pelaksanaan *</label><input type="text" id="ojt-rentang" class="w-full border p-3 text-xs rounded-xl input-ojt"></div></div><h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider mt-5">D. Anggota Kelompok OJT</h5><div id="ojt-members-container" class="space-y-3 mt-2"></div><button type="button" onclick="addOjtMember()" class="text-xs font-bold text-poltera-navy bg-blue-50 px-4 py-2.5 rounded-lg border hover:bg-blue-100 transition"><i class="fas fa-user-plus mr-1"></i> Tambah Anggota Lain</button></div>
+          
+          <div class="space-y-4" id="form-group-skl" style="display: none;"><h5 class="text-xs font-bold text-poltera-navy uppercase border-b pb-1 tracking-wider mt-5">D. Data Yudisium (SKL)</h5><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-[11px] font-semibold text-slate-500 mb-1">Tanggal Yudisium *</label><input type="text" id="skl-tgl-yudisium" class="w-full border p-3 text-xs rounded-xl input-skl"></div><div><label class="block text-[11px] font-semibold text-slate-500 mb-1">Masa Berlaku SKL *</label><input type="text" id="skl-masa-berlaku" class="w-full border p-3 text-xs rounded-xl input-skl"></div></div></div>
 
-        <div id="form-group-keperluan" class="hide bg-slate-50 p-4 rounded-xl border">
-          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Tujuan / Keperluan</label>
-          <select id="mhs-keperluan" onchange="toggleKeperluanLainnya()" class="w-full p-2.5 border rounded-lg text-sm bg-white"></select>
-          <input type="text" id="mhs-keperluan-text" class="w-full p-2.5 border rounded-lg text-sm mt-3 hide" placeholder="Ketik keperluan secara rinci...">
-        </div>
-
-        <div class="pt-4 flex justify-end gap-3">
-           <button type="button" onclick="changeView('dashboard')" class="px-5 py-2.5 rounded-xl border text-slate-500 text-xs font-bold hover:bg-slate-50 transition">Batal</button>
-           <button type="submit" class="px-5 py-2.5 rounded-xl bg-poltera-navy text-white text-xs font-bold shadow-md hover:bg-blue-800 transition"><i class="fas fa-bolt mr-2"></i> Kirim Seketika</button>
-        </div>
-      </form>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4 mt-4">
+            <div><label class="block text-xs font-semibold text-slate-500 mb-1">No WhatsApp Aktif *</label><input type="text" id="mhs-hp" required placeholder="081234..." class="w-full border p-3 text-xs rounded-xl"></div>
+            <div id="form-group-keperluan" style="display: none;"><label class="block text-xs font-semibold text-slate-500 mb-1" id="label-tujuan">Tujuan / Keperluan *</label><select id="mhs-keperluan" class="w-full border p-3 text-xs rounded-xl bg-white" onchange="toggleKeperluanLainnya()"></select><input type="text" id="mhs-keperluan-text" class="w-full border p-3 text-xs rounded-xl mt-2 hide"></div>
+          </div>
+          
+          <div class="text-right border-t pt-4"><button type="submit" class="w-full md:w-auto bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md"><i class="fas fa-paper-plane mr-1.5"></i> Kirim ke Database Real-Time</button></div>
+        </form>
+      </div>
     </div>
   </template>
 
@@ -133,20 +139,19 @@
           <h4 class="font-bold text-sm shrink-0"><i class="fas fa-bolt text-emerald-500 mr-2"></i>Antrean Surat Real-Time</h4>
       </div>
       <div class="overflow-x-auto flex-1">
-          <table class="w-full text-left border-collapse min-w-[800px]"><thead class="bg-slate-100 text-slate-500 text-[10px] font-extrabold uppercase border-b sticky top-0 z-10"><tr><th class="p-3">Waktu</th><th class="p-3">No Surat / ID</th><th class="p-3">Mahasiswa</th><th class="p-3">Jenis</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Tindakan</th></tr></thead><tbody class="text-xs divide-y divide-slate-100" id="fb-table-body"><tr><td colspan="6" class="p-8 text-center"><i class="fas fa-spinner fa-spin mr-2"></i> Menghubungkan ke Firestore...</td></tr></tbody></table>
+          <table class="w-full text-left border-collapse min-w-[800px]"><thead class="bg-slate-100 text-slate-500 text-[10px] font-extrabold uppercase border-b sticky top-0 z-10"><tr><th class="p-3">Waktu</th><th class="p-3">No Surat / ID</th><th class="p-3">Mahasiswa</th><th class="p-3">Jenis</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Tindakan</th></tr></thead><tbody class="text-xs divide-y divide-slate-100" id="fb-table-body"><tr><td colspan="6" class="p-8 text-center"><i class="fas fa-spinner fa-spin mr-2"></i> Menarik data...</td></tr></tbody></table>
       </div>
     </div>
   </template>
 
   <!-- ================= MODAL ALASAN PENOLAKAN ================= -->
-  <div id="reject-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center backdrop-blur-sm hide">
-    <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl transform transition-all border-t-4 border-rose-500">
-      <h3 class="text-lg font-extrabold text-slate-800 mb-1"><i class="fas fa-exclamation-circle text-rose-500 mr-2"></i> Tolak Dokumen</h3>
-      <p class="text-[11px] font-semibold text-slate-500 mb-4 leading-relaxed">Berikan alasan penolakan. Pesan ini langsung dikirim ke WhatsApp mahasiswa bersangkutan.</p>
-      <textarea id="reject-reason" rows="3" class="w-full p-3 border rounded-xl text-sm mb-5 focus:border-rose-500 focus:ring-1 focus:ring-rose-500" placeholder="Contoh: Tanda tangan belum lengkap..."></textarea>
+  <div id="reject-modal" class="fixed inset-0 bg-slate-900/60 z-[60] flex items-center justify-center hide">
+    <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl">
+      <h3 class="text-lg font-bold text-slate-800 mb-4">Tolak Dokumen</h3>
+      <textarea id="reject-reason" rows="3" class="w-full p-3 border rounded-xl text-sm mb-4" placeholder="Ketik alasan..."></textarea>
       <div class="flex justify-end gap-3">
-        <button onclick="closeRejectModal()" class="px-4 py-2.5 rounded-xl font-bold text-slate-500 border hover:bg-slate-50 text-xs transition">Batal</button>
-        <button onclick="submitRejectForm()" class="px-4 py-2.5 rounded-xl font-bold bg-rose-600 text-white shadow-md hover:bg-rose-700 text-xs transition"><i class="fas fa-paper-plane mr-2"></i> Kirim Penolakan</button>
+        <button onclick="closeRejectModal()" class="px-4 py-2 border rounded-xl text-xs font-bold">Batal</button>
+        <button onclick="submitRejectForm()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold">Kirim Tolak</button>
       </div>
     </div>
   </div>
@@ -158,21 +163,12 @@
     // -------------------------------------------------------------
     // INISIALISASI FIREBASE & GAS MICROSERVICE
     // -------------------------------------------------------------
-    const firebaseConfig = {
-      apiKey: "AIzaSyBLMONLXydW3nqBKnbVh7y6IoeeCXkMveA",
-      authDomain: "siparta-poltera.firebaseapp.com",
-      projectId: "siparta-poltera",
-      storageBucket: "siparta-poltera.firebasestorage.app",
-      messagingSenderId: "1019784565445",
-      appId: "1:1019784565445:web:4d01687606461ef0e456ac",
-      measurementId: "G-5R258DP34L"
-    };
-
-    // PASTIKAN INI ADALAH URL DEPLOY BARU JIKA ADA ERROR CETAK PDF
+    const firebaseConfig = { apiKey: "AIzaSyBLMONLXydW3nqBKnbVh7y6IoeeCXkMveA", authDomain: "siparta-poltera.firebaseapp.com", projectId: "siparta-poltera", storageBucket: "siparta-poltera.firebasestorage.app", messagingSenderId: "1019784565445", appId: "1:1019784565445:web:4d01687606461ef0e456ac" };
+    
+    // PERHATIAN: Masukkan URL Deploy Baru Anda dari Tahap 1 di Sini!
     const GAS_MICROSERVICE_URL = "https://script.google.com/macros/s/AKfycbxJbTFcvIVLjiqqgVX83RGcI1hLm5uW2Nq9YzLEb69kVwLvYGR_Fx75fvpAd1KSVQfpDg/exec";
     
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
     // -------------------------------------------------------------
 
     let appState = { role: null, user: null, currentView: 'dashboard', selectedMhs: null, pendingSuratCode: null };
@@ -181,93 +177,78 @@
     const MASTER_JENIS = [ {id: "1", nama: "Surat Keterangan Aktif"}, {id: "2", nama: "Surat Keterangan"}, {id: "3", nama: "Surat Pengantar OJT"}, {id: "4", nama: "Monitoring Beasiswa"}, {id: "5", nama: "Keterangan Lulus (SKL)"} ];
     const MASTER_KEPERLUAN = ["Tunjangan Gaji Orang Tua", "Persyaratan Beasiswa", "Pembuatan Rekening Bank", "Kehilangan KTM", "Persyaratan Magang / OJT"];
 
-    function validasiInput(input) { if (selectedAuthRole === 'mahasiswa') input.value = input.value.replace(/[^0-9]/g, ''); }
-    function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('sidebar-overlay'); if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); } }
-
     window.onload = function() {
       document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       const savedUser = localStorage.getItem('esurat_fb_user'); const savedRole = localStorage.getItem('esurat_fb_role');
-      if(savedUser && savedRole) { 
-          appState.user = JSON.parse(savedUser); appState.role = savedRole; 
-          const savedMhs = localStorage.getItem('esurat_fb_mhs'); if(savedMhs) appState.selectedMhs = JSON.parse(savedMhs); 
-          document.getElementById('role-selection-section').classList.add('hide'); masukKeSistem(true); 
-      }
+      if(savedUser && savedRole) { appState.user = JSON.parse(savedUser); appState.role = savedRole; const savedMhs = localStorage.getItem('esurat_fb_mhs'); if(savedMhs) appState.selectedMhs = JSON.parse(savedMhs); document.getElementById('role-selection-section').classList.add('hide'); masukKeSistem(true); }
     };
 
     let selectedAuthRole = '';
-    function bukaFormKredensial(role) {
-      selectedAuthRole = role; document.getElementById('role-selection-section').classList.add('hide'); document.getElementById('credential-form-section').classList.remove('hide');
-      const label = document.getElementById('label-field-username'); const input = document.getElementById('auth-username'); const passInput = document.getElementById('auth-password');
-      if (role === 'mahasiswa') { label.innerText = "NRP Anda"; input.placeholder = "Contoh: 331120000"; passInput.placeholder = "Password NRP"; } 
-      else { label.innerText = "Username Admin"; input.placeholder = "admin"; passInput.placeholder = "Password Admin"; }
-    }
+    function bukaFormKredensial(role) { selectedAuthRole = role; document.getElementById('role-selection-section').classList.add('hide'); document.getElementById('credential-form-section').classList.remove('hide'); document.getElementById('label-field-username').innerText = role === 'mahasiswa' ? "NRP Anda" : "Username Admin"; }
     function kembaliKePilihanRole() { document.getElementById('credential-form-section').classList.add('hide'); document.getElementById('role-selection-section').classList.remove('hide'); }
 
-    async function prosesVerifikasiKredensial(event) {
-      event.preventDefault(); 
-      const userVal = document.getElementById('auth-username').value.trim(); const passVal = document.getElementById('auth-password').value; 
+    async function prosesVerifikasiKredensial(e) {
+      e.preventDefault(); const userVal = document.getElementById('auth-username').value.trim(); const passVal = document.getElementById('auth-password').value; 
       showToast("Memeriksa Database...", "Menghubungkan ke Firestore", "fa-spinner fa-spin");
       try {
         let docRef = (selectedAuthRole === 'admin') ? db.collection('users').doc('admin_baak') : db.collection('users').doc(userVal);
         const doc = await docRef.get();
-        if (doc.exists) {
-            const data = doc.data();
-            if (data.password === passVal && data.role === selectedAuthRole) {
-                appState.role = selectedAuthRole; 
-                appState.user = { name: data.name || data.nama, username: userVal, nim: (selectedAuthRole === 'mahasiswa' ? userVal : ''), role: selectedAuthRole === 'mahasiswa' ? 'Mahasiswa' : 'Admin Akademik' };
-                if (selectedAuthRole === 'mahasiswa') appState.selectedMhs = data;
-                masukKeSistem(false);
-            } else { showToast("Ditolak", "Password salah atau role tidak sesuai!", "fa-times-circle"); }
-        } else { showToast("Tidak Ditemukan", "Akun tidak terdaftar di database Firebase.", "fa-user-slash"); }
-      } catch (error) { showToast("Error Jaringan", "Gagal terhubung ke Firebase.", "fa-wifi"); }
+        if (doc.exists && doc.data().password === passVal && doc.data().role === selectedAuthRole) {
+            appState.role = selectedAuthRole; appState.user = { name: doc.data().name || doc.data().nama, username: userVal, nim: (selectedAuthRole === 'mahasiswa' ? userVal : ''), role: selectedAuthRole === 'mahasiswa' ? 'Mahasiswa' : 'Admin Akademik' };
+            if (selectedAuthRole === 'mahasiswa') appState.selectedMhs = doc.data();
+            masukKeSistem(false);
+        } else { showToast("Ditolak", "Password salah atau role tidak sesuai!", "fa-times-circle"); }
+      } catch (error) { showToast("Error", "Gagal terhubung ke Firebase.", "fa-wifi"); }
     }
 
     function masukKeSistem(isAutoLogin = false) { 
       document.getElementById('nav-user-name').innerText = appState.user.name; document.getElementById('nav-user-role').innerText = appState.user.role; document.getElementById('nav-initial').innerText = appState.user.name.charAt(0); buildSidebarNavigation(); document.getElementById('login-screen').classList.add('hide'); document.getElementById('app-screen').classList.remove('hide'); 
-      localStorage.setItem('esurat_fb_user', JSON.stringify(appState.user)); localStorage.setItem('esurat_fb_role', appState.role);
-      if(appState.selectedMhs) localStorage.setItem('esurat_fb_mhs', JSON.stringify(appState.selectedMhs));
+      localStorage.setItem('esurat_fb_user', JSON.stringify(appState.user)); localStorage.setItem('esurat_fb_role', appState.role); if(appState.selectedMhs) localStorage.setItem('esurat_fb_mhs', JSON.stringify(appState.selectedMhs));
       changeView('dashboard'); if(!isAutoLogin) showToast("Berhasil", `Login Firebase Sukses!`, "fa-bolt text-emerald-500"); 
     }
     
-    function handleLogout() { 
-        if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } 
-        appState.role = null; appState.user = null; localStorage.clear(); document.getElementById('app-screen').classList.add('hide'); document.getElementById('login-screen').classList.remove('hide'); kembaliKePilihanRole(); 
-    }
+    function handleLogout() { if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } appState.role = null; appState.user = null; localStorage.clear(); document.getElementById('app-screen').classList.add('hide'); document.getElementById('login-screen').classList.remove('hide'); kembaliKePilihanRole(); }
+
+    function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('sidebar-overlay'); if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); } }
 
     function buildSidebarNavigation() {
       let nav = `<button onclick="changeView('dashboard')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-home text-sm w-4"></i> Dashboard</button>`;
-      if(appState.role === 'mahasiswa') { 
-          nav += `<button onclick="changeView('pengajuan')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-edit text-sm w-4"></i> Ajukan Surat</button><button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-history text-sm w-4"></i> Riwayat</button>`; 
-      } else { 
-          nav += `<button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-tasks text-sm w-4"></i> Antrean Firebase</button>`; 
-      }
+      if(appState.role === 'mahasiswa') { nav += `<button onclick="changeView('pengajuan')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-edit text-sm w-4"></i> Ajukan Surat</button><button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-history text-sm w-4"></i> Riwayat</button>`; 
+      } else { nav += `<button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-tasks text-sm w-4"></i> Antrean Firebase</button>`; }
       document.getElementById('nav-menu').innerHTML = nav;
     }
 
-    function ajukanSuratSpesifik(kode) {
-        if (appState.role !== 'mahasiswa') { showToast("Informasi", "Hanya Mahasiswa yang dapat membuat pengajuan.", "fa-info-circle"); return; }
-        appState.pendingSuratCode = kode; changeView('pengajuan');
-    }
+    function ajukanSuratSpesifik(kode) { if (appState.role !== 'mahasiswa') return showToast("Informasi", "Hanya Mahasiswa yang dapat membuat pengajuan.", "fa-info-circle"); appState.pendingSuratCode = kode; changeView('pengajuan'); }
 
     function changeView(viewName) {
-      appState.currentView = viewName; 
-      document.getElementById('view-wrapper').innerHTML = ''; 
-      document.getElementById('view-wrapper').appendChild(document.getElementById(`view-${viewName}`).content.cloneNode(true));
+      appState.currentView = viewName; document.getElementById('view-wrapper').innerHTML = ''; document.getElementById('view-wrapper').appendChild(document.getElementById(`view-${viewName}`).content.cloneNode(true));
       if(window.innerWidth < 768) { const sidebar = document.getElementById('main-sidebar'); if (!sidebar.classList.contains('-translate-x-full')) toggleSidebar(); }
-      
       if(viewName === 'dashboard' && appState.role === 'admin') { document.getElementById('card-quota').style.display = 'flex'; }
       else if(viewName === 'pengajuan') { setupFormPengajuan(); }
       else if(viewName === 'riwayat') { listenToRiwayatFirestore(); }
     }
 
-    // =========================================================================
-    // FASE 2: FIRESTORE PENGAJUAN (MAHASISWA)
-    // =========================================================================
+    // ================== LOGIKA FORM DINAMIS (DIKEMBALIKAN UTUH) ==================
+    function toggleFormDinamis() {
+      const jenisVal = document.getElementById('mhs-jenis-surat').value;
+      document.getElementById('form-group-ortu').style.display = 'none'; document.getElementById('form-group-umum').style.display = 'none'; document.getElementById('form-group-ojt').style.display = 'none'; document.getElementById('form-group-keperluan').style.display = 'none'; document.getElementById('form-group-skl').style.display = 'none'; 
+      document.querySelectorAll('.input-ortu, .input-umum, .input-ojt, .input-skl').forEach(el => el.removeAttribute('required')); document.getElementById('mhs-keperluan').removeAttribute('required');
+      document.getElementById('label-tujuan').innerText = "Tujuan / Keperluan *"; document.getElementById('label-alamat').innerText = "Alamat Lengkap *"; document.getElementById('label-ipk').innerText = "IPK Terakhir *";
+
+      if (jenisVal === '1') { document.getElementById('form-group-ortu').style.display = 'block'; document.getElementById('form-group-keperluan').style.display = 'block'; document.querySelectorAll('.input-ortu').forEach(el => el.setAttribute('required', 'true')); document.getElementById('mhs-keperluan').setAttribute('required', 'true'); } 
+      else if (jenisVal === '2') { document.getElementById('form-group-umum').style.display = 'block'; document.getElementById('form-group-keperluan').style.display = 'block'; document.querySelectorAll('.input-umum').forEach(el => el.setAttribute('required', 'true')); document.getElementById('mhs-keperluan').setAttribute('required', 'true'); } 
+      else if (jenisVal === '3') { document.getElementById('form-group-ojt').style.display = 'block'; document.querySelectorAll('.input-ojt').forEach(el => el.setAttribute('required', 'true')); }
+      else if (jenisVal === '4') { document.getElementById('form-group-umum').style.display = 'block'; document.getElementById('form-group-keperluan').style.display = 'block'; document.querySelectorAll('.input-umum').forEach(el => el.setAttribute('required', 'true')); document.getElementById('mhs-keperluan').setAttribute('required', 'true'); document.getElementById('label-alamat').innerText = "Alamat Sesuai KK *"; document.getElementById('label-tujuan').innerText = "Nama Program Beasiswa *"; }
+      else if (jenisVal === '5') { document.getElementById('form-group-umum').style.display = 'block'; document.getElementById('form-group-skl').style.display = 'block'; document.querySelectorAll('.input-umum, .input-skl').forEach(el => el.setAttribute('required', 'true')); document.getElementById('label-ipk').innerText = "Total SKS / IPK *"; }
+    }
+    
+    function toggleKeperluanLainnya() { const val = document.getElementById('mhs-keperluan').value; const textInput = document.getElementById('mhs-keperluan-text'); if(val === 'LAINNYA') { textInput.classList.remove('hide'); textInput.setAttribute('required', 'true'); } else { textInput.classList.add('hide'); textInput.removeAttribute('required'); } }
+    function addOjtMember() { const container = document.getElementById('ojt-members-container'); const idx = container.children.length + 2; const html = `<div class="flex flex-col md:flex-row gap-3 items-end bg-slate-50 p-3.5 rounded-xl border relative member-row"><div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">NRP Anggota ${idx}</label><input type="text" class="w-full border p-2 text-xs rounded-lg ojt-m-nim" required></div><div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">Nama Anggota ${idx}</label><input type="text" class="w-full border p-2 text-xs rounded-lg ojt-m-nama" required></div><div class="w-full"><label class="block text-[10px] font-semibold text-slate-500 mb-1">Prodi Anggota ${idx}</label><input type="text" class="w-full border p-2 text-xs rounded-lg ojt-m-prodi" required></div><button type="button" onclick="this.parentElement.remove()" class="w-full md:w-auto px-4 py-2 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold"><i class="fas fa-trash"></i></button></div>`; container.insertAdjacentHTML('beforeend', html); }
+
     function setupFormPengajuan() {
         if(appState.selectedMhs) {
-          document.getElementById('mhs-nama').value = appState.selectedMhs.nama || ""; 
-          document.getElementById('mhs-nim').value = appState.selectedMhs.nim || ""; 
-          document.getElementById('mhs-prodi').value = appState.selectedMhs.prodi || ""; 
+          document.getElementById('mhs-nama').value = appState.selectedMhs.nama || ""; document.getElementById('mhs-nim').value = appState.selectedMhs.nim || ""; document.getElementById('mhs-prodi').value = appState.selectedMhs.prodi || ""; document.getElementById('mhs-semester').value = appState.selectedMhs.semester || ""; document.getElementById('mhs-tahun-akad').value = appState.selectedMhs.tahun_akademik || ""; document.getElementById('mhs-lama-studi').value = appState.selectedMhs.lama_studi || "3 Tahun";
+          if(document.getElementById('mhs-jurusan')) document.getElementById('mhs-jurusan').value = appState.selectedMhs.jurusan || "-";
         }
         let optSurat = `<option value="">-- Pilih Jenis Surat --</option>`; MASTER_JENIS.forEach(s => optSurat += `<option value="${s.id}">${s.nama}</option>`); document.getElementById('mhs-jenis-surat').innerHTML = optSurat;
         let optKep = `<option value="">-- Pilih Keperluan --</option>`; MASTER_KEPERLUAN.forEach(k => optKep += `<option value="${k}">${k}</option>`); optKep += `<option value="LAINNYA" class="font-bold bg-slate-100">Lainnya (Ketik Manual)</option>`; document.getElementById('mhs-keperluan').innerHTML = optKep;
@@ -277,48 +258,75 @@
     async function doSubmitPermohonan(e) {
       e.preventDefault(); 
       const jenisSurat = document.getElementById('mhs-jenis-surat').value;
+      
+      let anggotaOJT = [];
+      if (jenisSurat === '3') { 
+          anggotaOJT.push({ nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi }); 
+          document.querySelectorAll('.member-row').forEach(row => { anggotaOJT.push({ nim: row.querySelector('.ojt-m-nim').value, nama: row.querySelector('.ojt-m-nama').value, prodi: row.querySelector('.ojt-m-prodi').value }); }); 
+      }
+      
       let keperluanVal = document.getElementById('mhs-keperluan').value; 
-      if (keperluanVal === 'LAINNYA') keperluanVal = document.getElementById('mhs-keperluan-text').value;
+      if (keperluanVal === 'LAINNYA') { keperluanVal = document.getElementById('mhs-keperluan-text').value; }
+      if (jenisSurat === '5') { keperluanVal = "-"; } 
 
       const payload = {
-        nim: appState.selectedMhs.nim,
-        nama: appState.selectedMhs.nama,
-        prodi: appState.selectedMhs.prodi,
-        kode_surat: jenisSurat,
-        tujuan: keperluanVal || "-",
-        no_hp: document.getElementById('mhs-hp').value || "-",
-        status: "Menunggu Verifikasi",
-        no_surat: "-",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi,
+        semester: document.getElementById('mhs-semester').value, tahun_akademik: document.getElementById('mhs-tahun-akad').value, no_hp: document.getElementById('mhs-hp').value, 
+        kode_surat: jenisSurat, tujuan: keperluanVal, 
+        ortu_nama: document.getElementById('ortu-nama')?.value || "-", ortu_nip: document.getElementById('ortu-nip')?.value || "-", ortu_pangkat: document.getElementById('ortu-pangkat')?.value || "-", ortu_instansi: document.getElementById('ortu-instansi')?.value || "-", 
+        tujuan_pt: document.getElementById('ojt-tujuan')?.value || document.getElementById('skl-tgl-yudisium')?.value || "-", 
+        alamat_pt: document.getElementById('ojt-alamat')?.value || document.getElementById('skl-masa-berlaku')?.value || "-", 
+        lama_ojt: document.getElementById('ojt-lama')?.value || "-", rentang_ojt: document.getElementById('ojt-rentang')?.value || "-", anggota_ojt: JSON.stringify(anggotaOJT),
+        umum_ttl: document.getElementById('umum-ttl')?.value || "-", umum_alamat: document.getElementById('umum-alamat')?.value || "-", umum_ipk: document.getElementById('umum-ipk')?.value || "-",
+        status: "Menunggu Verifikasi", no_surat: "-", createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
       showToast("Menyimpan", "Mengirim ke Firestore...", "fa-spinner fa-spin");
       try { 
           await db.collection("pengajuan").add(payload); 
+          
+          // TRIGGER WA NOTIF KE ADMIN DAN MHS VIA GAS (Baru ditambahkan!)
+          const formNotif = new URLSearchParams();
+          formNotif.append('action', 'notifPengajuanBaru');
+          formNotif.append('data', JSON.stringify({ nama: payload.nama, nim: payload.nim, no_hp: payload.no_hp }));
+          fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: formNotif }); 
+
           showToast("Sukses", "Terkirim secepat kilat!", "fa-bolt text-emerald-500"); 
           changeView('riwayat'); 
       } catch(e) { showToast("Gagal", e.message, "fa-times"); }
     }
 
     // =========================================================================
-    // FASE 2.5: LISTENER REAL-TIME (SEKARANG DILENGKAPI TOMBOL DOWNLOAD)
+    // FASE 2.5: LISTENER REAL-TIME (DENGAN SORTING MANUAL JAVASCRIPT)
+    // Mengatasi Error Spinner tanpa perlu buat Index Firebase
     // =========================================================================
     function listenToRiwayatFirestore() {
         if(unsubscribeRiwayat) unsubscribeRiwayat(); 
         
-        let query = db.collection("pengajuan").orderBy("createdAt", "desc");
+        // Buang orderBy dari Firestore agar tidak minta Index
+        let query = db.collection("pengajuan");
         if(appState.role === 'mahasiswa') { query = query.where("nim", "==", appState.user.nim); }
 
         unsubscribeRiwayat = query.onSnapshot((snapshot) => {
             const container = document.getElementById('fb-table-body');
             if(!container) return; 
-            
             if (snapshot.empty) { container.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">Belum ada pengajuan.</td></tr>`; updateStats(0,0,0,0); return; }
+            
+            // Tarik data ke Array untuk Sorting
+            let docsArr = [];
+            snapshot.forEach(doc => docsArr.push({ id: doc.id, ...doc.data() }));
+            
+            // Lakukan Sorting Descending di Javascript murni!
+            docsArr.sort((a,b) => {
+                let timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+                let timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+                return timeB - timeA; 
+            });
             
             let markup = ''; let t_tot = 0, t_pend = 0, t_done = 0, t_rej = 0;
 
-            snapshot.forEach((doc) => {
-                const d = doc.data(); t_tot++;
+            docsArr.forEach((d) => {
+                t_tot++;
                 if(d.status === "Menunggu Verifikasi") t_pend++; else if(d.status === "Selesai") t_done++; else t_rej++;
                 
                 let badge = d.status === "Selesai" ? `<span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full font-bold">Disetujui</span>` : d.status === "Ditolak" ? `<span class="px-2 py-1 bg-rose-50 text-rose-600 rounded-full font-bold">Ditolak</span>` : `<span class="px-2 py-1 bg-amber-50 text-amber-600 rounded-full font-bold animate-pulse">Menunggu</span>`; 
@@ -326,16 +334,14 @@
                 let jenisStr = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Surat Lain";
 
                 let actionBtn = `<div class="flex gap-1 justify-center">`;
-                
                 if(d.status === "Selesai" && d.link_pdf) {
                     actionBtn += `<a href="${d.link_pdf}" target="_blank" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition" title="Unduh PDF"><i class="fas fa-download"></i></a>`;
                 } else if(appState.role === 'admin' && d.status === "Menunggu Verifikasi") {
-                    actionBtn += `<button onclick="approveFirebase('${doc.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition"><i class="fas fa-check"></i></button>`;
-                    actionBtn += `<button onclick="openRejectModal('${doc.id}')" class="bg-rose-50 text-rose-600 border border-rose-100 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-rose-100 transition"><i class="fas fa-times"></i></button>`;
+                    actionBtn += `<button onclick="approveFirebase('${d.id}')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition"><i class="fas fa-check"></i></button>`;
+                    actionBtn += `<button onclick="openRejectModal('${d.id}')" class="bg-rose-50 text-rose-600 border border-rose-100 px-2.5 py-1.5 rounded-lg text-xs font-bold hover:bg-rose-100 transition"><i class="fas fa-times"></i></button>`;
                 }
                 actionBtn += `</div>`;
-
-                markup += `<tr class="border-b hover:bg-slate-50"><td class="p-3 font-semibold text-[10px]">${timeStr}</td><td class="p-3 font-mono text-[10px] font-bold text-slate-400">${d.no_surat || doc.id.substring(0,6)}</td><td class="p-3"><div><p class="font-bold text-slate-800">${d.nama}</p><p class="text-[10px] font-mono">${d.nim}</p></div></td><td class="p-3 text-[11px] font-bold text-poltera-navy">${jenisStr}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center">${actionBtn}</td></tr>`;
+                markup += `<tr class="border-b hover:bg-slate-50"><td class="p-3 font-semibold text-[10px]">${timeStr}</td><td class="p-3 font-mono text-[10px] font-bold text-slate-400">${d.no_surat || d.id.substring(0,6)}</td><td class="p-3"><div><p class="font-bold text-slate-800">${d.nama}</p><p class="text-[10px] font-mono">${d.nim}</p></div></td><td class="p-3 text-[11px] font-bold text-poltera-navy">${jenisStr}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center">${actionBtn}</td></tr>`;
             });
             container.innerHTML = markup;
             updateStats(t_tot, t_pend, t_done, t_rej);
@@ -348,32 +354,14 @@
     async function approveFirebase(docId) {
         showToast("Mencetak PDF...", "Mengirim instruksi ke Microservice", "fa-spinner fa-spin");
         try {
-            const doc = await db.collection("pengajuan").doc(docId).get();
-            const data = doc.data();
-
-            const payloadData = {
-                nim: data.nim, nama: data.nama, prodi: data.prodi, kode_surat: data.kode_surat, 
-                no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", 
-                tahun_akademik: data.tahun_akademik || "-", ortu_nama: data.ortu_nama || "-", 
-                ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", 
-                ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", 
-                umum_alamat: data.umum_alamat || "-", umum_ipk: data.umum_ipk || "-", 
-                tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", 
-                lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-"
-            };
-
-            const form = new URLSearchParams();
-            form.append('action', 'cetakDokumen');
-            form.append('data', JSON.stringify(payloadData));
-
+            const doc = await db.collection("pengajuan").doc(docId).get(); const data = doc.data();
+            const payloadData = { nim: data.nim, nama: data.nama, prodi: data.prodi, kode_surat: data.kode_surat, no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", tahun_akademik: data.tahun_akademik || "-", ortu_nama: data.ortu_nama || "-", ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", umum_alamat: data.umum_alamat || "-", umum_ipk: data.umum_ipk || "-", tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-" };
+            
+            const form = new URLSearchParams(); form.append('action', 'cetakDokumen'); form.append('data', JSON.stringify(payloadData));
             const res = await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form }).then(r => r.json());
 
             if (res.status === 'success') {
-                await db.collection("pengajuan").doc(docId).update({ 
-                    status: "Selesai", 
-                    no_surat: res.no_surat,
-                    link_pdf: res.link_pdf
-                });
+                await db.collection("pengajuan").doc(docId).update({ status: "Selesai", no_surat: res.no_surat, link_pdf: res.link_pdf });
                 showToast("Sukses!", "PDF jadi & Surat Disetujui!", "fa-bolt text-emerald-500");
             } else { showToast("Gagal Cetak", res.message, "fa-times"); }
         } catch(e) { showToast("Error Jaringan", "Gagal menghubungi Microservice.", "fa-wifi"); }
@@ -386,39 +374,17 @@
     async function submitRejectForm() {
         const alasan = document.getElementById('reject-reason').value.trim();
         if(!alasan) return alert("Isi alasan penolakan!");
-        
         showToast("Menolak...", "Mengirim Notifikasi WA", "fa-spinner fa-spin");
         try {
             const doc = await db.collection("pengajuan").doc(rejectTargetId).get();
-            const form = new URLSearchParams();
-            form.append('action', 'notifTolak');
-            form.append('data', JSON.stringify({ no_hp: doc.data().no_hp, alasan: alasan }));
-            
+            const form = new URLSearchParams(); form.append('action', 'notifTolak'); form.append('data', JSON.stringify({ no_hp: doc.data().no_hp, alasan: alasan }));
             await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form });
             await db.collection("pengajuan").doc(rejectTargetId).update({ status: "Ditolak", alasan_tolak: alasan });
-            
-            showToast("Ditolak", "Surat ditolak & Mahasiswa telah di-WA.", "fa-check");
-            closeRejectModal();
+            showToast("Ditolak", "Surat ditolak & Mahasiswa telah di-WA.", "fa-check"); closeRejectModal();
         } catch(e) { showToast("Error", "Gagal menolak dokumen.", "fa-wifi"); }
     }
 
-    // =====================================================================
-    // UTILITY
-    // =====================================================================
-    function updateStats(tot, pend, done, rej) {
-        if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = tot;
-        if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pend;
-        if(document.getElementById('stat-done')) document.getElementById('stat-done').innerText = done;
-        if(document.getElementById('stat-reject')) document.getElementById('stat-reject').innerText = rej;
-    }
-
-    function toggleFormDinamis() {
-      const jenisVal = document.getElementById('mhs-jenis-surat').value;
-      const grpKep = document.getElementById('form-group-keperluan');
-      if(grpKep) grpKep.style.display = 'none';
-      if (jenisVal === '1' || jenisVal === '2') { if(grpKep) grpKep.style.display = 'block'; } 
-    }
-    function toggleKeperluanLainnya() { const val = document.getElementById('mhs-keperluan').value; const textInput = document.getElementById('mhs-keperluan-text'); if(val === 'LAINNYA') { textInput.classList.remove('hide'); } else { textInput.classList.add('hide'); } }
+    function updateStats(tot, pend, done, rej) { if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = tot; if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pend; if(document.getElementById('stat-done')) document.getElementById('stat-done').innerText = done; if(document.getElementById('stat-reject')) document.getElementById('stat-reject').innerText = rej; }
     function showToast(title, desc, iconClass) { document.getElementById('toast-title').innerText = title; document.getElementById('toast-desc').innerText = desc; document.getElementById('toast-icon-box').innerHTML = `<i class="fas ${iconClass}"></i>`; document.getElementById('app-toast').classList.remove('hide'); setTimeout(() => document.getElementById('app-toast').classList.add('hide'), 3000); }
   </script>
 </body>
