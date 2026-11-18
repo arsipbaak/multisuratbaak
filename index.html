@@ -240,6 +240,8 @@
   <script>
     // 1. INISIALISASI FIREBASE & GAS MICROSERVICE
     const firebaseConfig = { apiKey: "AIzaSyBLMONLXydW3nqBKnbVh7y6IoeeCXkMveA", authDomain: "siparta-poltera.firebaseapp.com", projectId: "siparta-poltera", storageBucket: "siparta-poltera.firebasestorage.app", messagingSenderId: "1019784565445", appId: "1:1019784565445:web:4d01687606461ef0e456ac" };
+    
+    // PERHATIAN: Masukkan URL Deploy Baru Anda dari Tahap 1 di Sini!
     const GAS_MICROSERVICE_URL = "https://script.google.com/macros/s/AKfycbxJbTFcvIVLjiqqgVX83RGcI1hLm5uW2Nq9YzLEb69kVwLvYGR_Fx75fvpAd1KSVQfpDg/exec";
     
     firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
@@ -253,7 +255,7 @@
 
     function escapeHTML(str) { return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)); }
 
-    // BLOK INIT ANTI DUPLIKASI - MENCEGAH MASALAH LOGOUT SAAT REFRESH
+    // INIT AUTO LOGIN
     document.addEventListener("DOMContentLoaded", function() {
       document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       try {
@@ -307,7 +309,7 @@
           localStorage.setItem('esurat_fb_user', JSON.stringify(appState.user)); 
           localStorage.setItem('esurat_fb_role', appState.role); 
           if(appState.selectedMhs) localStorage.setItem('esurat_fb_mhs', JSON.stringify(appState.selectedMhs));
-      } catch (e) {} // Silent fail untuk browser strict Iframe
+      } catch (e) {}
 
       changeView('dashboard'); if(!isAutoLogin) showToast("Berhasil", `Login Firebase Sukses!`, "fa-bolt text-emerald-500"); 
     }
@@ -343,6 +345,9 @@
       else if(viewName === 'users') { fetchUsersList(); }
     }
 
+    // =============================================================
+    // 2. LOGIKA FORM DINAMIS & PENGAJUAN
+    // =============================================================
     function toggleFormDinamis() {
       const jenisVal = document.getElementById('mhs-jenis-surat').value;
       document.getElementById('form-group-ortu').style.display = 'none'; document.getElementById('form-group-umum').style.display = 'none'; document.getElementById('form-group-ojt').style.display = 'none'; document.getElementById('form-group-keperluan').style.display = 'none'; document.getElementById('form-group-skl').style.display = 'none'; 
@@ -370,7 +375,9 @@
     }
 
     async function doSubmitPermohonan(e) {
-      e.preventDefault(); const jenisSurat = document.getElementById('mhs-jenis-surat').value;
+      e.preventDefault(); 
+      const jenisSurat = document.getElementById('mhs-jenis-surat').value;
+      
       let anggotaOJT = [];
       if (jenisSurat === '3') { 
           anggotaOJT.push({ nim: appState.selectedMhs.nim, nama: appState.selectedMhs.nama, prodi: appState.selectedMhs.prodi }); 
@@ -401,6 +408,9 @@
       } catch(e) { showToast("Gagal", e.message, "fa-times"); }
     }
 
+    // =============================================================
+    // 3. LISTENER RIWAYAT & TOMBOL AKSI LENGKAP (EYE & EDIT)
+    // =============================================================
     function listenToRiwayatFirestore() {
         if(unsubscribeRiwayat) unsubscribeRiwayat(); 
         let query = db.collection("pengajuan");
@@ -440,6 +450,9 @@
         });
     }
 
+    // =============================================================
+    // 4. LOGIKA PREVIEW DETAIL (MATA) & EDIT
+    // =============================================================
     function openPreviewModal(id) { 
       const data = appState.fbData.find(d => d.id === id); if(!data) return; 
       let timeStr = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('id-ID') : "-";
@@ -505,13 +518,20 @@
         } catch(e) { showToast("Gagal", "Error menyimpan.", "fa-times"); }
     }
 
+    // =============================================================
+    // 5. PENYETUJUAN & OTOMATISASI GENERATE NOMOR SURAT
+    // =============================================================
     async function approveFirebase(docId) {
         showToast("Mencetak PDF...", "Memanggil Mesin Dokumen", "fa-spinner fa-spin");
         try {
             const data = appState.fbData.find(d => d.id === docId);
             const snap = await db.collection("pengajuan").where("status", "==", "Selesai").get();
-            const noSuratGenerator = String(snap.size + 1).padStart(3, '0') + "/PL34/DV.01.18/" + new Date().getFullYear();
-            const payloadData = { nim: data.nim, nama: data.nama, prodi: data.prodi, jurusan: data.jurusan || "-", no_surat: noSuratGenerator, kode_surat: data.kode_surat, no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", tahun_akademik: data.tahun_akademik || "-", ortu_nama: data.ortu_nama || "-", ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", umum_alamat: data.umum_alamat || "-", umum_ipk: data.umum_ipk || "-", tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-" };
+            const hitungSelesai = snap.size;
+            const noSuratGenerator = String(hitungSelesai + 1).padStart(3, '0') + "/PL34/DV.01.18/" + new Date().getFullYear();
+
+            const payloadData = { 
+                nim: data.nim, nama: data.nama, prodi: data.prodi, jurusan: data.jurusan || "-", no_surat: noSuratGenerator, kode_surat: data.kode_surat, no_hp: data.no_hp, tujuan: data.tujuan, semester: data.semester || "-", tahun_akademik: data.tahun_akademik || "-", ortu_nama: data.ortu_nama || "-", ortu_nip: data.ortu_nip || "-", ortu_pangkat: data.ortu_pangkat || "-", ortu_instansi: data.ortu_instansi || "-", umum_ttl: data.umum_ttl || "-", umum_alamat: data.umum_alamat || "-", umum_ipk: data.umum_ipk || "-", tujuan_pt: data.tujuan_pt || "-", alamat_pt: data.alamat_pt || "-", lama_ojt: data.lama_ojt || "-", rentang_ojt: data.rentang_ojt || "-" 
+            };
             
             const form = new URLSearchParams(); form.append('action', 'cetakDokumen'); form.append('data', JSON.stringify(payloadData));
             const res = await fetch(GAS_MICROSERVICE_URL, { method: 'POST', body: form }).then(r => r.json());
@@ -540,33 +560,70 @@
         } catch(e) { showToast("Error", "Gagal menolak dokumen.", "fa-wifi"); }
     }
 
-    function setupProfil() { document.getElementById('prof-nim').value = appState.user.nim; document.getElementById('prof-nama').value = appState.user.name; }
-    async function doUpdateProfil(e) { e.preventDefault(); const newPass = document.getElementById('prof-pass').value.trim(); if(!newPass) return showToast("Info", "Password tidak diubah.", "fa-info-circle"); showToast("Menyimpan...", "Mengupdate Firebase", "fa-spinner fa-spin"); try { await db.collection("users").doc(appState.user.nim).update({ password: newPass }); showToast("Sukses", "Password diubah.", "fa-check"); document.getElementById('prof-pass').value = ''; } catch(e) { showToast("Gagal", "Error update.", "fa-times"); } }
+    // =============================================================
+    // 6. FITUR SAMPINGAN (PROFIL, MANAJEMEN USER, EXPORT)
+    // =============================================================
+    function setupProfil() {
+        document.getElementById('prof-nim').value = appState.user.nim; document.getElementById('prof-nama').value = appState.user.name;
+    }
+
+    async function doUpdateProfil(e) {
+        e.preventDefault();
+        const newPass = document.getElementById('prof-pass').value.trim();
+        if(!newPass) return showToast("Info", "Password tidak diubah.", "fa-info-circle");
+        showToast("Menyimpan...", "Mengupdate Firebase", "fa-spinner fa-spin");
+        try {
+            await db.collection("users").doc(appState.user.nim).update({ password: newPass });
+            showToast("Sukses", "Password berhasil diubah.", "fa-check");
+            document.getElementById('prof-pass').value = '';
+        } catch(e) { showToast("Gagal", "Error update password.", "fa-times"); }
+    }
 
     async function fetchUsersList() {
-        document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Memuat Data...</td></tr>`;
+        document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Memuat Mahasiswa dari Firestore...</td></tr>`;
         try {
             const snap = await db.collection("users").where("role", "==", "mahasiswa").get();
             if(snap.empty) return document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center">Data mahasiswa kosong.</td></tr>`;
             let markup = '';
-            snap.forEach(doc => { let m = doc.data(); let badge = m.status === 'Aktif' ? `<span class="text-emerald-600 bg-emerald-50 px-2 py-1 rounded font-bold">Aktif</span>` : `<span class="text-rose-600 bg-rose-50 px-2 py-1 rounded font-bold">${m.status}</span>`; markup += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-3 font-mono font-bold text-[10px]">${m.nim}</td><td class="p-3 font-bold">${m.nama}</td><td class="p-3 text-[10px] text-slate-500">${m.prodi}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center"><button onclick="doResetPassword('${m.nim}')" class="bg-poltera-dark text-white px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm"><i class="fas fa-key"></i> Reset</button></td></tr>`; });
+            snap.forEach(doc => {
+                let m = doc.data();
+                let badge = m.status === 'Aktif' ? `<span class="text-emerald-600 bg-emerald-50 px-2 py-1 rounded font-bold">Aktif</span>` : `<span class="text-rose-600 bg-rose-50 px-2 py-1 rounded font-bold">${m.status}</span>`;
+                markup += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-3 font-mono font-bold text-[10px]">${m.nim}</td><td class="p-3 font-bold">${m.nama}</td><td class="p-3 text-[10px] text-slate-500">${m.prodi}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center"><button onclick="doResetPassword('${m.nim}')" class="bg-poltera-dark text-white px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm" title="Reset Sandi ke NRP"><i class="fas fa-key"></i> Reset</button></td></tr>`;
+            });
             document.getElementById('user-body-target').innerHTML = markup;
         } catch(e) { document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Error memuat data.</td></tr>`; }
     }
 
-    async function doResetPassword(nim_target) { if(!confirm(`Yakin reset sandi ${nim_target} menjadi NRP?`)) return; showToast("Memproses", "Mereset...", "fa-spinner fa-spin"); try { await db.collection("users").doc(nim_target).update({ password: nim_target }); showToast("Sukses", `Sandi di-reset.`, "fa-check"); } catch(e) { showToast("Gagal", "Error Firebase.", "fa-times"); } }
+    async function doResetPassword(nim_target) {
+        if(!confirm(`Yakin reset kata sandi NRP ${nim_target} menjadi default (sesuai NRP)?`)) return;
+        showToast("Memproses", "Mereset sandi...", "fa-spinner fa-spin");
+        try {
+            await db.collection("users").doc(nim_target).update({ password: nim_target });
+            showToast("Sukses", `Sandi NRP ${nim_target} di-reset.`, "fa-check");
+        } catch(e) { showToast("Gagal", "Error Firebase.", "fa-times"); }
+    }
 
     function doExportLaporan() {
         const bln = document.getElementById('lap-bulan').value; const thn = document.getElementById('lap-tahun').value;
-        if(appState.fbData.length === 0) return alert("Belum ada data.");
+        if(appState.fbData.length === 0) return alert("Belum ada data untuk diekspor.");
+        
         let csv = "Tanggal,No Surat,NIM,Nama Lengkap,Prodi,Jenis Surat,Keperluan,Status,Link Dokumen\n";
         appState.fbData.forEach(d => {
             let tglObj = d.createdAt ? new Date(d.createdAt.toDate()) : new Date();
-            if (bln !== "" && tglObj.getMonth().toString() !== bln) return; if (thn !== "" && tglObj.getFullYear().toString() !== thn) return;
-            let tgl = tglObj.toLocaleDateString('id-ID'); let jns = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Lainnya";
+            if (bln !== "" && tglObj.getMonth().toString() !== bln) return;
+            if (thn !== "" && tglObj.getFullYear().toString() !== thn) return;
+            
+            let tgl = tglObj.toLocaleDateString('id-ID');
+            let jns = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Lainnya";
             csv += `"${tgl}","${d.no_surat||"-"}","${d.nim}","${d.nama}","${d.prodi}","${jns}","${d.tujuan}","${d.status}","${d.link_pdf||"-"}"\n`;
         });
-        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); let link = document.createElement("a"); link.setAttribute("href", URL.createObjectURL(blob)); link.setAttribute("download", `Laporan_SIPARTA_${thn}_${bln}.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        
+        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Laporan_SIPARTA_${thn}_${bln}.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     function updateStats(tot, pend, done, rej) { if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = tot; if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pend; if(document.getElementById('stat-done')) document.getElementById('stat-done').innerText = done; if(document.getElementById('stat-reject')) document.getElementById('stat-reject').innerText = rej; }
