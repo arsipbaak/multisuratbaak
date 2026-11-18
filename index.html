@@ -72,7 +72,7 @@
     </main>
   </div>
 
-  <!-- VIEWS DASHBOARD -->
+  <!-- ==================== VIEWS DASHBOARD ==================== -->
   <template id="view-dashboard">
     <div class="space-y-6">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -89,7 +89,7 @@
     </div>
   </template>
 
-  <!-- ================= FITUR: FORM PENGAJUAN ================= -->
+  <!-- ==================== FITUR: FORM PENGAJUAN ==================== -->
   <template id="view-pengajuan">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 bg-white rounded-2xl border p-5 md:p-6 shadow-sm space-y-6">
@@ -131,7 +131,7 @@
     </div>
   </template>
 
-  <!-- ================= FITUR: DAFTAR ANTREAN REAL-TIME ================= -->
+  <!-- ==================== FITUR: DAFTAR ANTREAN REAL-TIME ==================== -->
   <template id="view-riwayat">
     <div class="bg-white rounded-2xl border shadow-sm flex flex-col h-full max-h-[85vh]">
       <div class="p-4 border-b flex flex-col md:flex-row justify-between items-center bg-slate-50 gap-3">
@@ -139,6 +139,55 @@
       </div>
       <div class="overflow-x-auto flex-1">
           <table class="w-full text-left border-collapse min-w-[800px]"><thead class="bg-slate-100 text-slate-500 text-[10px] font-extrabold uppercase border-b sticky top-0 z-10"><tr><th class="p-3">Waktu</th><th class="p-3">No Surat / ID</th><th class="p-3">Mahasiswa</th><th class="p-3">Jenis</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Tindakan</th></tr></thead><tbody class="text-xs divide-y divide-slate-100" id="fb-table-body"><tr><td colspan="6" class="p-8 text-center"><i class="fas fa-spinner fa-spin mr-2"></i> Menarik data...</td></tr></tbody></table>
+      </div>
+    </div>
+  </template>
+
+  <!-- ==================== FITUR: PROFIL & GANTI PASSWORD ==================== -->
+  <template id="view-profil">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl border shadow-sm p-6 space-y-6">
+      <div class="border-b pb-4"><h4 class="font-bold text-lg">Profil & Keamanan Akun</h4><p class="text-xs text-slate-500">Perbarui profil dan kata sandi Anda di database Firebase.</p></div>
+      <form onsubmit="doUpdateProfil(event)" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="block text-xs font-semibold text-slate-400 mb-1">NRP</label><input type="text" id="prof-nim" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl font-mono"></div>
+          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Nama Lengkap</label><input type="text" id="prof-nama" readonly class="w-full bg-slate-100 border p-3 text-xs rounded-xl"></div>
+        </div>
+        <div class="border p-4 rounded-xl bg-slate-50">
+          <h5 class="text-xs font-bold text-rose-600 mb-3"><i class="fas fa-lock mr-1"></i> Ubah Password Firebase</h5>
+          <div><label class="block text-xs font-semibold text-slate-500 mb-1">Password Baru (Opsional)</label><input type="password" id="prof-pass" class="w-full border p-3 text-xs rounded-xl focus:ring-1 outline-none" placeholder="Kosongkan jika tidak ingin mengubah password"></div>
+        </div>
+        <div class="text-right"><button type="submit" class="bg-poltera-navy text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md"><i class="fas fa-save mr-1.5"></i> Simpan Perubahan</button></div>
+      </form>
+    </div>
+  </template>
+
+  <!-- ==================== FITUR: MANAJEMEN USER (ADMIN) ==================== -->
+  <template id="view-users">
+    <div class="bg-white rounded-2xl border shadow-sm flex flex-col h-full max-h-[85vh]">
+      <div class="p-4 border-b flex flex-col md:flex-row justify-between items-center bg-slate-50 gap-3">
+        <h4 class="font-bold text-sm shrink-0">Direktori Mahasiswa (Firestore)</h4>
+      </div>
+      <div class="overflow-x-auto flex-1">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-slate-100 text-slate-500 text-[10px] font-extrabold uppercase border-b sticky top-0"><tr class="border-b"><th class="p-3">NRP</th><th class="p-3">Nama</th><th class="p-3">Prodi</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Aksi</th></tr></thead>
+          <tbody class="text-xs divide-y divide-slate-100" id="user-body-target"></tbody>
+        </table>
+      </div>
+    </div>
+  </template>
+
+  <!-- ==================== FITUR: EKSPOR LAPORAN ==================== -->
+  <template id="view-laporan">
+    <div class="max-w-xl mx-auto bg-white rounded-2xl border shadow-sm p-6 space-y-6">
+      <div class="border-b pb-4"><h4 class="font-bold text-lg">Ekspor Laporan Firebase</h4><p class="text-xs text-slate-500">Unduh rekap data Firestore ke CSV (Excel).</p></div>
+      <div class="space-y-4">
+        <div><label class="block text-xs font-semibold text-slate-500 mb-1">Pilih Bulan & Tahun</label>
+          <div class="flex gap-2">
+            <select id="lap-bulan" class="w-full border p-3 text-xs rounded-xl bg-white"><option value="">Semua Bulan</option><option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option><option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option><option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option><option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option></select>
+            <input type="number" id="lap-tahun" value="2026" class="w-32 border p-3 text-xs rounded-xl text-center">
+          </div>
+        </div>
+        <button onclick="doExportLaporan()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs shadow-md mt-4"><i class="fas fa-file-excel mr-1.5"></i> Unduh File CSV</button>
       </div>
     </div>
   </template>
@@ -193,7 +242,7 @@
     // =============================================================
     const firebaseConfig = { apiKey: "AIzaSyBLMONLXydW3nqBKnbVh7y6IoeeCXkMveA", authDomain: "siparta-poltera.firebaseapp.com", projectId: "siparta-poltera", storageBucket: "siparta-poltera.firebasestorage.app", messagingSenderId: "1019784565445", appId: "1:1019784565445:web:4d01687606461ef0e456ac" };
     
-    // MASUKKAN URL GAS ANDA DI SINI
+    // MASUKKAN URL GAS ANDA DI SINI (Pastikan sesuai instruksi)
     const GAS_MICROSERVICE_URL = "https://script.google.com/macros/s/AKfycbxJbTFcvIVLjiqqgVX83RGcI1hLm5uW2Nq9YzLEb69kVwLvYGR_Fx75fvpAd1KSVQfpDg/exec";
     
     firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
@@ -243,8 +292,15 @@
 
     function buildSidebarNavigation() {
       let nav = `<button onclick="changeView('dashboard')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-home text-sm w-4"></i> Dashboard</button>`;
-      if(appState.role === 'mahasiswa') { nav += `<button onclick="changeView('pengajuan')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-edit text-sm w-4"></i> Ajukan Surat</button><button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-history text-sm w-4"></i> Riwayat</button>`; 
-      } else { nav += `<button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-tasks text-sm w-4"></i> Antrean Firebase</button>`; }
+      if(appState.role === 'mahasiswa') { 
+          nav += `<button onclick="changeView('pengajuan')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-edit text-sm w-4"></i> Ajukan Surat</button>`;
+          nav += `<button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-history text-sm w-4"></i> Riwayat</button>`; 
+          nav += `<button onclick="changeView('profil')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4 border-t border-slate-700 pt-4"><i class="fas fa-user-cog text-sm w-4"></i> Profil & Password</button>`; 
+      } else { 
+          nav += `<button onclick="changeView('riwayat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-tasks text-sm w-4"></i> Antrean Firebase</button>`; 
+          nav += `<button onclick="changeView('users')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition mt-4 border-t border-slate-700 pt-4"><i class="fas fa-users text-sm w-4"></i> Manajemen User</button>`; 
+          nav += `<button onclick="changeView('laporan')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition"><i class="fas fa-file-export text-sm w-4"></i> Ekspor Laporan CSV</button>`; 
+      }
       document.getElementById('nav-menu').innerHTML = nav;
     }
 
@@ -253,9 +309,12 @@
     function changeView(viewName) {
       appState.currentView = viewName; document.getElementById('view-wrapper').innerHTML = ''; document.getElementById('view-wrapper').appendChild(document.getElementById(`view-${viewName}`).content.cloneNode(true));
       if(window.innerWidth < 768) { const sidebar = document.getElementById('main-sidebar'); if (!sidebar.classList.contains('-translate-x-full')) toggleSidebar(); }
+      
       if(viewName === 'dashboard' && appState.role === 'admin') { document.getElementById('card-quota').style.display = 'flex'; }
       else if(viewName === 'pengajuan') { setupFormPengajuan(); }
       else if(viewName === 'riwayat') { listenToRiwayatFirestore(); }
+      else if(viewName === 'profil') { setupProfil(); }
+      else if(viewName === 'users') { fetchUsersList(); }
     }
 
     // =============================================================
@@ -337,11 +396,9 @@
             if(!container) return; 
             if (snapshot.empty) { container.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">Belum ada pengajuan.</td></tr>`; updateStats(0,0,0,0); return; }
             
-            // Simpan ke Global Array untuk Modal Preview & Edit Instan
+            // Simpan ke Global Array untuk Modal
             appState.fbData = []; 
             snapshot.forEach(doc => appState.fbData.push({ id: doc.id, ...doc.data() }));
-            
-            // Sort Manual
             appState.fbData.sort((a,b) => { let timeA = a.createdAt ? a.createdAt.toMillis() : 0; let timeB = b.createdAt ? b.createdAt.toMillis() : 0; return timeB - timeA; });
             
             let markup = ''; let t_tot = 0, t_pend = 0, t_done = 0, t_rej = 0;
@@ -353,8 +410,7 @@
                 let jenisStr = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Surat Lain";
 
                 let actionBtn = `<div class="flex gap-1 justify-center">`;
-                
-                // TOMBOL PREVIEW DETAIL SELALU ADA UNTUK SEMUA (MHS & ADMIN)
+                // TOMBOL PREVIEW (MATA)
                 actionBtn += `<button onclick="openPreviewModal('${d.id}')" class="bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Preview Detail"><i class="fas fa-eye"></i></button>`;
 
                 if(d.status === "Selesai" && d.link_pdf) {
@@ -387,23 +443,11 @@
         <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Jurusan / Prodi</th><td class="p-3">${escapeHTML(data.jurusan || "-")} / ${escapeHTML(data.prodi)}</td></tr>
         <tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Semester / Thn Akademik</th><td class="p-3">Semester ${escapeHTML(data.semester)} / ${escapeHTML(data.tahun_akademik)}</td></tr>`; 
         
-      if(data.kode_surat === '1') { 
-          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Ortu / Wali</th><td class="p-3">${escapeHTML(data.ortu_nama)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">NIP Wali</th><td class="p-3">${escapeHTML(data.ortu_nip)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Pangkat / Golongan</th><td class="p-3">${escapeHTML(data.ortu_pangkat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Instansi / Unit Kerja</th><td class="p-3">${escapeHTML(data.ortu_instansi)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tujuan / Keperluan</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; 
-      } 
-      else if(data.kode_surat === '2') { 
-          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat Lengkap</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">IPK Terakhir</th><td class="p-3 font-bold">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tujuan / Keperluan</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; 
-      } 
-      else if(data.kode_surat === '3') { 
-          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Perusahaan PT</th><td class="p-3 font-bold">${escapeHTML(data.tujuan_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat PT</th><td class="p-3">${escapeHTML(data.alamat_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Lama Waktu OJT</th><td class="p-3">${escapeHTML(data.lama_ojt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Rentang Pelaksanaan</th><td class="p-3">${escapeHTML(data.rentang_ojt)}</td></tr>`; 
-          try { let anggota = JSON.parse(data.anggota_ojt); if(anggota.length > 0) { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r align-top">Anggota OJT</th><td class="p-3"><ul class="list-decimal pl-4 space-y-1">`; anggota.forEach(a => { html += `<li><span class="font-bold">${escapeHTML(a.nama)}</span> <span class="text-[10px] text-slate-500 font-mono">(${escapeHTML(a.nim)}) - ${escapeHTML(a.prodi)}</span></li>`; }); html += `</ul></td></tr>`; } } catch(e) {} 
-          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr>`;
-      }
-      else if(data.kode_surat === '4') { 
-          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat KK</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">IPK Terakhir</th><td class="p-3 font-bold">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Beasiswa</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; 
-      } 
-      else if(data.kode_surat === '5') { 
-          html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat Lengkap</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">SKS / IPK</th><td class="p-3 font-bold text-poltera-navy">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tanggal Yudisium</th><td class="p-3 font-semibold">${escapeHTML(data.tujuan_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Masa Berlaku SKL</th><td class="p-3">${escapeHTML(data.alamat_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr>`; 
-      }
+      if(data.kode_surat === '1') { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Ortu / Wali</th><td class="p-3">${escapeHTML(data.ortu_nama)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">NIP Wali</th><td class="p-3">${escapeHTML(data.ortu_nip)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Pangkat / Golongan</th><td class="p-3">${escapeHTML(data.ortu_pangkat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Instansi / Unit Kerja</th><td class="p-3">${escapeHTML(data.ortu_instansi)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tujuan / Keperluan</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; } 
+      else if(data.kode_surat === '2') { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat Lengkap</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">IPK Terakhir</th><td class="p-3 font-bold">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tujuan / Keperluan</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; } 
+      else if(data.kode_surat === '3') { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Perusahaan PT</th><td class="p-3 font-bold">${escapeHTML(data.tujuan_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat PT</th><td class="p-3">${escapeHTML(data.alamat_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Lama Waktu OJT</th><td class="p-3">${escapeHTML(data.lama_ojt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Rentang Pelaksanaan</th><td class="p-3">${escapeHTML(data.rentang_ojt)}</td></tr>`; try { let anggota = JSON.parse(data.anggota_ojt); if(anggota.length > 0) { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r align-top">Anggota OJT</th><td class="p-3"><ul class="list-decimal pl-4 space-y-1">`; anggota.forEach(a => { html += `<li><span class="font-bold">${escapeHTML(a.nama)}</span> <span class="text-[10px] text-slate-500 font-mono">(${escapeHTML(a.nim)}) - ${escapeHTML(a.prodi)}</span></li>`; }); html += `</ul></td></tr>`; } } catch(e) {} html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr>`; }
+      else if(data.kode_surat === '4') { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat KK</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">IPK Terakhir</th><td class="p-3 font-bold">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Nama Beasiswa</th><td class="p-3 font-semibold text-poltera-navy">${escapeHTML(data.tujuan)}</td></tr>`; } 
+      else if(data.kode_surat === '5') { html += `<tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tempat / Tgl Lahir</th><td class="p-3">${escapeHTML(data.umum_ttl)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Alamat Lengkap</th><td class="p-3">${escapeHTML(data.umum_alamat)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">SKS / IPK</th><td class="p-3 font-bold text-poltera-navy">${escapeHTML(data.umum_ipk)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Tanggal Yudisium</th><td class="p-3 font-semibold">${escapeHTML(data.tujuan_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">Masa Berlaku SKL</th><td class="p-3">${escapeHTML(data.alamat_pt)}</td></tr><tr class="border-b"><th class="p-3 text-slate-500 bg-slate-50 border-r">No WA</th><td class="p-3">${escapeHTML(data.no_hp || "-")}</td></tr>`; }
       html += `</tbody></table>`; document.getElementById('preview-content').innerHTML = html; document.getElementById('preview-modal').classList.remove('hide'); 
     }
     function closePreviewModal() { document.getElementById('preview-modal').classList.add('hide'); }
@@ -443,12 +487,10 @@
         try {
             const data = appState.fbData.find(d => d.id === editTargetId);
             let updates = { semester: document.getElementById('e-semester')?.value || "", tahun_akademik: document.getElementById('e-tahun_akademik')?.value || "", no_hp: document.getElementById('e-no_hp')?.value || "" };
-            
             if(data.kode_surat === '1') { updates.ortu_nama = document.getElementById('e-ortu_nama').value; updates.ortu_nip = document.getElementById('e-ortu_nip').value; updates.ortu_pangkat = document.getElementById('e-ortu_pangkat').value; updates.ortu_instansi = document.getElementById('e-ortu_instansi').value; updates.tujuan = document.getElementById('e-tujuan').value; }
             if(data.kode_surat === '2' || data.kode_surat === '4') { updates.umum_ttl = document.getElementById('e-umum_ttl').value; updates.umum_alamat = document.getElementById('e-umum_alamat').value; updates.umum_ipk = document.getElementById('e-umum_ipk').value; updates.tujuan = document.getElementById('e-tujuan').value; }
             if(data.kode_surat === '3') { updates.tujuan_pt = document.getElementById('e-tujuan_pt').value; updates.alamat_pt = document.getElementById('e-alamat_pt').value; updates.lama_ojt = document.getElementById('e-lama_ojt').value; updates.rentang_ojt = document.getElementById('e-rentang_ojt').value; }
             if(data.kode_surat === '5') { updates.umum_ttl = document.getElementById('e-umum_ttl').value; updates.umum_alamat = document.getElementById('e-umum_alamat').value; updates.umum_ipk = document.getElementById('e-umum_ipk').value; updates.tujuan_pt = document.getElementById('e-tujuan_pt').value; updates.alamat_pt = document.getElementById('e-alamat_pt').value; }
-            
             await db.collection("pengajuan").doc(editTargetId).update(updates);
             showToast("Sukses", "Data dikoreksi!", "fa-check"); closeEditModal();
         } catch(e) { showToast("Gagal", "Error menyimpan.", "fa-times"); }
@@ -461,7 +503,6 @@
         showToast("Mencetak PDF...", "Memanggil Mesin Dokumen", "fa-spinner fa-spin");
         try {
             const data = appState.fbData.find(d => d.id === docId);
-            
             const snap = await db.collection("pengajuan").where("status", "==", "Selesai").get();
             const hitungSelesai = snap.size;
             const noSuratGenerator = String(hitungSelesai + 1).padStart(3, '0') + "/PL34/DV.01.18/" + new Date().getFullYear();
@@ -495,6 +536,73 @@
             await db.collection("pengajuan").doc(rejectTargetId).update({ status: "Ditolak", alasan_tolak: alasan });
             showToast("Ditolak", "Surat ditolak & Mahasiswa telah di-WA.", "fa-check"); closeRejectModal();
         } catch(e) { showToast("Error", "Gagal menolak dokumen.", "fa-wifi"); }
+    }
+
+    // =============================================================
+    // 6. FITUR SAMPINGAN (PROFIL, MANAJEMEN USER, EXPORT)
+    // =============================================================
+    function setupProfil() {
+        document.getElementById('prof-nim').value = appState.user.nim; document.getElementById('prof-nama').value = appState.user.name;
+    }
+
+    async function doUpdateProfil(e) {
+        e.preventDefault();
+        const newPass = document.getElementById('prof-pass').value.trim();
+        if(!newPass) return showToast("Info", "Password tidak diubah.", "fa-info-circle");
+        showToast("Menyimpan...", "Mengupdate Firebase", "fa-spinner fa-spin");
+        try {
+            await db.collection("users").doc(appState.user.nim).update({ password: newPass });
+            showToast("Sukses", "Password berhasil diubah.", "fa-check");
+            document.getElementById('prof-pass').value = '';
+        } catch(e) { showToast("Gagal", "Error update password.", "fa-times"); }
+    }
+
+    async function fetchUsersList() {
+        document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Memuat Mahasiswa dari Firestore...</td></tr>`;
+        try {
+            const snap = await db.collection("users").where("role", "==", "mahasiswa").get();
+            if(snap.empty) return document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center">Data mahasiswa kosong.</td></tr>`;
+            let markup = '';
+            snap.forEach(doc => {
+                let m = doc.data();
+                let badge = m.status === 'Aktif' ? `<span class="text-emerald-600 bg-emerald-50 px-2 py-1 rounded font-bold">Aktif</span>` : `<span class="text-rose-600 bg-rose-50 px-2 py-1 rounded font-bold">${m.status}</span>`;
+                markup += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-3 font-mono font-bold text-[10px]">${m.nim}</td><td class="p-3 font-bold">${m.nama}</td><td class="p-3 text-[10px] text-slate-500">${m.prodi}</td><td class="p-3 text-center">${badge}</td><td class="p-3 text-center"><button onclick="doResetPassword('${m.nim}')" class="bg-poltera-dark text-white px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm" title="Reset Sandi ke NRP"><i class="fas fa-key"></i> Reset</button></td></tr>`;
+            });
+            document.getElementById('user-body-target').innerHTML = markup;
+        } catch(e) { document.getElementById('user-body-target').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Error memuat data.</td></tr>`; }
+    }
+
+    async function doResetPassword(nim_target) {
+        if(!confirm(`Yakin reset kata sandi NRP ${nim_target} menjadi default (sesuai NRP)?`)) return;
+        showToast("Memproses", "Mereset sandi...", "fa-spinner fa-spin");
+        try {
+            await db.collection("users").doc(nim_target).update({ password: nim_target });
+            showToast("Sukses", `Sandi NRP ${nim_target} di-reset.`, "fa-check");
+        } catch(e) { showToast("Gagal", "Error Firebase.", "fa-times"); }
+    }
+
+    function doExportLaporan() {
+        const bln = document.getElementById('lap-bulan').value; const thn = document.getElementById('lap-tahun').value;
+        if(appState.fbData.length === 0) return alert("Belum ada data untuk diekspor.");
+        
+        let csv = "Tanggal,No Surat,NIM,Nama Lengkap,Prodi,Jenis Surat,Keperluan,Status,Link Dokumen\n";
+        appState.fbData.forEach(d => {
+            let tglObj = d.createdAt ? new Date(d.createdAt.toDate()) : new Date();
+            // Filter berdasarkan bulan & tahun jika dipilih
+            if (bln !== "" && tglObj.getMonth().toString() !== bln) return;
+            if (thn !== "" && tglObj.getFullYear().toString() !== thn) return;
+            
+            let tgl = tglObj.toLocaleDateString('id-ID');
+            let jns = MASTER_JENIS.find(x => x.id === d.kode_surat)?.nama || "Lainnya";
+            csv += `"${tgl}","${d.no_surat||"-"}","${d.nim}","${d.nama}","${d.prodi}","${jns}","${d.tujuan}","${d.status}","${d.link_pdf||"-"}"\n`;
+        });
+        
+        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Laporan_SIPARTA_${thn}_${bln}.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     function updateStats(tot, pend, done, rej) { if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = tot; if(document.getElementById('stat-pending')) document.getElementById('stat-pending').innerText = pend; if(document.getElementById('stat-done')) document.getElementById('stat-done').innerText = done; if(document.getElementById('stat-reject')) document.getElementById('stat-reject').innerText = rej; }
