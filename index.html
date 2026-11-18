@@ -294,26 +294,80 @@
       } catch (error) { showToast("Error", "Gagal terhubung ke Firebase.", "fa-wifi"); }
     }
 
+     // =========================================================================
+    // INIT AUTO LOGIN (VERSI ANTIPELURU - TAHAN HARD RELOAD CTRL+F5)
+    // =========================================================================
+    function jalankanAutoLogin() {
+      try {
+        const dateEl = document.getElementById('header-date');
+        if(dateEl) dateEl.innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        const savedUser = localStorage.getItem('esurat_fb_user'); 
+        const savedRole = localStorage.getItem('esurat_fb_role');
+        
+        if (savedUser && savedRole && savedUser !== "undefined") { 
+            appState.user = JSON.parse(savedUser); 
+            appState.role = savedRole; 
+            const savedMhs = localStorage.getItem('esurat_fb_mhs'); 
+            if (savedMhs && savedMhs !== "undefined") { 
+                appState.selectedMhs = JSON.parse(savedMhs); 
+            }
+            
+            const roleSection = document.getElementById('role-selection-section');
+            if(roleSection) roleSection.classList.add('hide'); 
+            
+            masukKeSistem(true); 
+        }
+      } catch (e) { 
+          console.error("Gagal membaca memori sesi:", e); 
+          // HAPUS perintah localStorage.clear() agar sesi tetap aman meski ada error UI
+      }
+    }
+
+    // Pengecekan Sakti: Jika halaman sudah terlanjur loading (karena Ctrl+F5), langsung jalankan fungsinya!
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        setTimeout(jalankanAutoLogin, 1);
+    } else {
+        document.addEventListener("DOMContentLoaded", jalankanAutoLogin);
+    }
+
+    // =========================================================================
+    // FUNGSI MASUK KE SISTEM YANG LEBIH AMAN (SAFE DOM CHECK)
+    // =========================================================================
     function masukKeSistem(isAutoLogin = false) { 
       if(!appState.user) return;
       const safeName = appState.user.name || appState.user.nama || "Pengguna";
-      document.getElementById('nav-user-name').innerText = safeName; 
-      document.getElementById('nav-user-role').innerText = appState.user.role || "Akses Aktif"; 
-      document.getElementById('nav-initial').innerText = safeName.charAt(0).toUpperCase(); 
+      
+      const navUserName = document.getElementById('nav-user-name');
+      if(navUserName) navUserName.innerText = safeName; 
+      
+      const navUserRole = document.getElementById('nav-user-role');
+      if(navUserRole) navUserRole.innerText = appState.user.role || "Akses Aktif"; 
+      
+      const navInitial = document.getElementById('nav-initial');
+      if(navInitial) navInitial.innerText = safeName.charAt(0).toUpperCase(); 
       
       buildSidebarNavigation(); 
-      document.getElementById('login-screen').classList.add('hide'); 
-      document.getElementById('app-screen').classList.remove('hide'); 
+      
+      const loginScreen = document.getElementById('login-screen');
+      if(loginScreen) loginScreen.classList.add('hide'); 
+      
+      const appScreen = document.getElementById('app-screen');
+      if(appScreen) appScreen.classList.remove('hide'); 
       
       try {
           localStorage.setItem('esurat_fb_user', JSON.stringify(appState.user)); 
           localStorage.setItem('esurat_fb_role', appState.role); 
-          if(appState.selectedMhs) localStorage.setItem('esurat_fb_mhs', JSON.stringify(appState.selectedMhs));
-      } catch (e) {}
+          if(appState.selectedMhs) {
+              localStorage.setItem('esurat_fb_mhs', JSON.stringify(appState.selectedMhs));
+          }
+      } catch (e) {
+          console.warn("Penyimpanan sesi dicegat oleh browser.");
+      }
 
-      changeView('dashboard'); if(!isAutoLogin) showToast("Berhasil", `Login Firebase Sukses!`, "fa-bolt text-emerald-500"); 
-    }
-    
+      changeView('dashboard'); 
+      if(!isAutoLogin) showToast("Berhasil", `Login Firebase Sukses!`, "fa-bolt text-emerald-500"); 
+    }   
     function handleLogout() { if(unsubscribeRiwayat) { unsubscribeRiwayat(); unsubscribeRiwayat = null; } appState.role = null; appState.user = null; appState.fbData = []; localStorage.clear(); document.getElementById('app-screen').classList.add('hide'); document.getElementById('login-screen').classList.remove('hide'); kembaliKePilihanRole(); }
 
     function toggleSidebar() { const sidebar = document.getElementById('main-sidebar'); const overlay = document.getElementById('sidebar-overlay'); if (sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); } }
